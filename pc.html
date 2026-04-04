@@ -2,8 +2,8 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Файлы Егора - OCEAN OS</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>OCEAN OS</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
@@ -219,108 +219,224 @@
             50% { box-shadow: 0 0 40px rgba(168,85,247,0.4); transform: scale(1.05); }
         }
 
-        /* ====== MOBILE ADAPTATION ====== */
-        @media (max-width: 768px) {
+        /* Ensure all interactive elements are tap-friendly */
+        button, a, .egor-file-item {
+            touch-action: manipulation;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        /* ====== MOBILE ROTATION SCREEN ====== */
+        #mobile-rotate-screen {
+            position: fixed;
+            inset: 0;
+            z-index: 10000;
+            background: #030712;
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 2rem;
+            color: white;
+            text-align: center;
+            padding: 2rem;
+        }
+        #mobile-rotate-screen.visible {
+            display: flex;
+        }
+        .rotate-icon-wrap {
+            width: 100px;
+            height: 100px;
+            position: relative;
+            animation: rotateHint 2.5s ease-in-out infinite;
+        }
+        .rotate-phone {
+            width: 50px;
+            height: 80px;
+            border: 3px solid rgba(168, 85, 247, 0.8);
+            border-radius: 10px;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(168, 85, 247, 0.1);
+            box-shadow: 0 0 20px rgba(168, 85, 247, 0.3);
+        }
+        .rotate-phone::before {
+            content: '';
+            position: absolute;
+            bottom: 6px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            border: 2px solid rgba(168, 85, 247, 0.5);
+        }
+        .rotate-phone::after {
+            content: '';
+            position: absolute;
+            top: 4px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 16px;
+            height: 2px;
+            background: rgba(168, 85, 247, 0.5);
+            border-radius: 1px;
+        }
+        @keyframes rotateHint {
+            0%, 100% { transform: rotate(0deg); }
+            30%, 70% { transform: rotate(-90deg); }
+        }
+        .rotate-arrow {
+            position: absolute;
+            top: 8px;
+            right: -4px;
+            font-size: 1.5rem;
+            color: rgba(168, 85, 247, 0.8);
+            animation: arrowPulse 2.5s ease-in-out infinite;
+        }
+        @keyframes arrowPulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.3; }
+        }
+        .rotate-title {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: white;
+            letter-spacing: 0.02em;
+        }
+        .rotate-subtitle {
+            font-size: 0.9rem;
+            color: #9ca3af;
+            max-width: 280px;
+            line-height: 1.5;
+        }
+        .rotate-brand {
+            position: absolute;
+            bottom: 2rem;
+            font-size: 0.7rem;
+            color: rgba(168, 85, 247, 0.4);
+            text-transform: uppercase;
+            letter-spacing: 3px;
+        }
+
+        /* ====== FLOATING POWER BUTTON (mobile) ====== */
+        #mobile-power-btn {
+            display: none;
+            position: fixed;
+            bottom: 1.25rem;
+            right: 1.25rem;
+            width: 56px;
+            height: 56px;
+            border-radius: 50%;
+            background: rgba(31, 41, 55, 0.9);
+            border: 2px solid rgba(107, 114, 128, 0.5);
+            color: #9ca3af;
+            font-size: 1.4rem;
+            z-index: 200;
+            cursor: pointer;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.6);
+            transition: all 0.3s ease;
+            align-items: center;
+            justify-content: center;
+        }
+        #mobile-power-btn:active {
+            transform: scale(0.9);
+        }
+        #mobile-power-btn.on {
+            border-color: rgba(59, 130, 246, 0.6);
+            color: #60a5fa;
+            box-shadow: 0 0 20px rgba(59, 130, 246, 0.3);
+        }
+
+        /* ====== MOBILE LANDSCAPE — FULLSCREEN OS ====== */
+        @media (max-height: 500px) and (orientation: landscape) and (hover: none) and (pointer: coarse) {
+            /* Header — compact */
             .header-content {
-                height: 56px;
-                padding-left: 0.75rem !important;
-                padding-right: 0.75rem !important;
+                height: 36px !important;
+                padding-left: 0.5rem !important;
+                padding-right: 0.5rem !important;
             }
             .logo-text {
-                font-size: 0.95rem;
-                letter-spacing: 0;
+                font-size: 0.75rem !important;
+                letter-spacing: 0 !important;
             }
             header nav {
-                gap: 0.75rem !important;
+                gap: 0.5rem !important;
             }
             header nav a {
-                font-size: 0.8rem;
+                font-size: 0.65rem !important;
             }
+            header {
+                border-bottom-width: 1px !important;
+            }
+
+            /* Workspace — fill viewport */
             .pc-workspace {
-                padding: 0.25rem;
-                flex-direction: column;
-                gap: 0.5rem;
-                align-items: center;
-                justify-content: flex-start;
-                overflow-y: auto;
+                padding: 0 !important;
+                align-items: stretch !important;
+                justify-content: stretch !important;
             }
-            /* Monitor wrap — full width, no scale */
+
+            /* Hide physical computer parts */
+            .pc-main-layout {
+                width: 100% !important;
+                height: 100% !important;
+                max-width: none !important;
+                gap: 0 !important;
+                flex-direction: column !important;
+            }
+            .pc-sysunit {
+                display: none !important;
+            }
+            .monitor-stand-neck,
+            .monitor-stand-base {
+                display: none !important;
+            }
+
+            /* Monitor wrap — fullscreen, no border */
             #egor-pc-monitor-wrap {
                 transform: none !important;
                 width: 100% !important;
-                max-width: 100vw !important;
+                max-width: none !important;
+                height: 100% !important;
+                flex: 1 !important;
             }
-            /* Monitor screen — take more space */
             #egor-pc-monitor-wrap > div:first-child {
-                border-width: 4px !important;
-                border-radius: 6px;
+                border: none !important;
+                border-radius: 0 !important;
+                box-shadow: none !important;
             }
-            /* System unit — horizontal on mobile */
-            .pc-sysunit {
-                width: 100% !important;
-                height: auto !important;
-                flex-direction: row !important;
-                align-items: center;
-                padding: 0.5rem 0.75rem !important;
-                gap: 0.75rem;
-                border-radius: 0.5rem;
-                max-width: 300px;
+
+            /* Show floating power button */
+            #mobile-power-btn {
+                display: flex !important;
             }
-            .pc-sysunit .sysunit-leds {
-                width: auto !important;
-                height: 28px !important;
-                flex-direction: row !important;
-                gap: 0.5rem;
-                padding: 0 0.5rem !important;
-                border-bottom: none !important;
-                border-right: 1px solid #374151;
+
+            /* Boot logo — smaller */
+            #egor-pc-boot-logo {
+                font-size: 1.2rem !important;
             }
-            .pc-sysunit .sysunit-bays {
-                display: none !important;
-            }
-            .pc-sysunit .sysunit-vents {
-                display: none !important;
-            }
-            .pc-sysunit .sysunit-power {
-                height: auto !important;
-                border-top: none !important;
-                padding: 0 !important;
-                margin-left: auto;
-            }
-            .pc-sysunit .sysunit-power button {
-                width: 44px !important;
-                height: 44px !important;
-            }
-            /* Main layout — column */
-            .pc-main-layout {
-                flex-direction: column !important;
-                align-items: center !important;
-                gap: 0.5rem !important;
-            }
-            /* Monitor stand — smaller */
-            .monitor-stand-neck {
-                width: 3rem !important;
-                height: 0.35rem !important;
-            }
-            .monitor-stand-base {
-                width: 5rem !important;
-                height: 0.25rem !important;
-            }
-            /* OS interface adaptations */
-            #os-desktop-icons {
-                padding: 0.5rem !important;
-                gap: 0.5rem !important;
-            }
-            #os-desktop-icons > div {
-                width: 4rem !important;
-            }
-            #os-desktop-icons > div i {
+            #egor-pc-boot-logo i {
                 font-size: 1.5rem !important;
             }
-            #os-desktop-icons > div span {
-                font-size: 0.55rem !important;
+
+            /* Desktop icons */
+            #os-desktop-icons {
+                padding: 0.4rem !important;
+                gap: 0.4rem !important;
             }
-            /* Explorer — fullscreen inside monitor */
+            #os-desktop-icons > div {
+                width: 3.5rem !important;
+            }
+            #os-desktop-icons > div i {
+                font-size: 1.2rem !important;
+            }
+            #os-desktop-icons > div span {
+                font-size: 0.5rem !important;
+            }
+
+            /* Explorer — fullscreen */
             #os-window-explorer {
                 width: 100% !important;
                 height: 100% !important;
@@ -329,97 +445,171 @@
                 transform: none !important;
                 border-radius: 0 !important;
             }
-            /* Explorer grid — fewer columns */
-            #os-explorer-content .grid {
-                grid-template-columns: repeat(3, 1fr) !important;
-                gap: 0.5rem !important;
+            #os-window-explorer > div:first-child,
+            #os-window-explorer > div:nth-child(2) {
+                height: 1.75rem !important;
+                min-height: 1.75rem !important;
             }
-            #os-explorer-content .egor-file-item {
-                padding: 0.35rem !important;
-            }
-            #os-explorer-content .egor-file-item i {
-                font-size: 1.5rem !important;
-            }
-            #os-explorer-content .egor-file-item span {
+            #os-window-explorer > div:first-child span,
+            #os-window-explorer > div:nth-child(2) div {
                 font-size: 0.6rem !important;
             }
-            /* Password window — wider */
-            #os-window-password {
-                width: 85% !important;
-                max-width: 280px;
+            #os-explorer-content {
+                padding: 0.5rem !important;
             }
+            #os-explorer-content .grid {
+                grid-template-columns: repeat(4, 1fr) !important;
+                gap: 0.35rem !important;
+            }
+            #os-explorer-content .egor-file-item {
+                padding: 0.25rem !important;
+            }
+            #os-explorer-content .egor-file-item i {
+                font-size: 1.3rem !important;
+            }
+            #os-explorer-content .egor-file-item span {
+                font-size: 0.5rem !important;
+            }
+
+            /* Path bar */
+            #os-path-bar {
+                font-size: 0.55rem !important;
+                padding: 0.15rem 0.4rem !important;
+            }
+            #os-window-title {
+                font-size: 0.6rem !important;
+            }
+
+            /* Password window */
+            #os-window-password {
+                width: 50% !important;
+                max-width: 240px !important;
+                padding: 1.25rem !important;
+            }
+            #os-window-password i.fa-lock {
+                font-size: 2rem !important;
+                margin-bottom: 0.75rem !important;
+            }
+            #os-window-password h5 {
+                font-size: 0.8rem !important;
+                margin-bottom: 0.75rem !important;
+            }
+            #os-window-password input {
+                font-size: 0.9rem !important;
+                padding: 0.35rem 0.5rem !important;
+            }
+            #os-window-password button#os-pwd-submit {
+                padding: 0.4rem !important;
+                font-size: 0.75rem !important;
+            }
+
             /* Notepad — fullscreen */
             #os-window-notepad {
                 top: 0 !important;
                 left: 0 !important;
                 width: 100% !important;
-                height: 60% !important;
+                height: 100% !important;
                 border-radius: 0 !important;
             }
-            /* Gallery — always show nav buttons */
-            #gallery-prev, #gallery-next {
-                opacity: 0.7 !important;
-                width: 36px !important;
-                height: 36px !important;
+            #os-window-notepad > div:first-child {
+                height: 1.75rem !important;
             }
-            #gallery-prev { left: 0.5rem !important; }
-            #gallery-next { right: 0.5rem !important; }
-            /* Taskbar — compact */
+            #os-window-notepad > div:first-child span {
+                font-size: 0.6rem !important;
+            }
+            #os-notepad-content {
+                font-size: 0.75rem !important;
+                padding: 0.75rem !important;
+            }
+
+            /* Gallery */
+            #gallery-prev, #gallery-next {
+                opacity: 0.8 !important;
+                width: 32px !important;
+                height: 32px !important;
+            }
+            #gallery-prev { left: 0.35rem !important; }
+            #gallery-next { right: 0.35rem !important; }
+            #os-window-gallery > div:first-child {
+                height: 2rem !important;
+                padding: 0 0.75rem !important;
+            }
+            #os-window-gallery > div:first-child span {
+                font-size: 0.65rem !important;
+            }
+
+            /* Taskbar — touch-friendly */
             #os-taskbar {
                 height: 2.25rem !important;
-                padding-left: 0.5rem !important;
-                padding-right: 0.5rem !important;
+                padding-left: 0.4rem !important;
+                padding-right: 0.4rem !important;
             }
             #os-taskbar button {
                 width: 2rem !important;
                 height: 2rem !important;
+                min-width: 2rem !important;
             }
             #os-taskbar button i {
-                font-size: 0.85rem !important;
+                font-size: 0.8rem !important;
             }
-            #os-taskbar .text-sm {
-                font-size: 0.65rem !important;
-            }
-            #os-taskbar .text-\[10px\] {
-                font-size: 0.5rem !important;
-            }
-            /* Start menu */
-            #os-start-menu {
-                width: 200px !important;
-                bottom: 2.5rem !important;
-            }
-            #os-start-menu button {
-                padding: 0.5rem 0.75rem !important;
-                font-size: 0.75rem !important;
-            }
-            /* Path bar */
-            #os-path-bar {
+            #os-taskbar .text-sm,
+            #os-taskbar-time {
                 font-size: 0.6rem !important;
             }
-            #os-window-title {
+            #os-taskbar .text-\[10px\],
+            #os-taskbar-date {
+                font-size: 0.45rem !important;
+            }
+
+            /* Start menu */
+            #os-start-menu {
+                width: 180px !important;
+                bottom: 2.5rem !important;
+                border-radius: 0.5rem !important;
+            }
+            #os-start-menu .px-5 {
+                padding: 0.5rem 0.75rem !important;
+            }
+            #os-start-menu .w-10 {
+                width: 1.75rem !important;
+                height: 1.75rem !important;
+            }
+            #os-start-menu .text-sm {
                 font-size: 0.7rem !important;
             }
-            /* Nav bar heights */
-            #os-window-explorer > div:first-child,
-            #os-window-explorer > div:nth-child(2) {
-                height: 2rem !important;
+            #os-start-menu button {
+                padding: 0.4rem 0.75rem !important;
+                font-size: 0.65rem !important;
             }
         }
 
-        @media (max-width: 480px) {
-            .pc-sysunit .sysunit-power button {
-                width: 40px !important;
-                height: 40px !important;
+        /* ====== PORTRAIT + TOUCH — show rotation screen ====== */
+        @media (orientation: portrait) and (hover: none) and (pointer: coarse) {
+            #mobile-rotate-screen {
+                display: flex !important;
             }
-            #os-explorer-content .grid {
-                grid-template-columns: repeat(3, 1fr) !important;
+            /* Hide everything else */
+            header, .pc-workspace, .video-container, .video-overlay,
+            #audio-unlock, #mobile-power-btn {
+                display: none !important;
             }
         }
 
-        /* Ensure all interactive elements are tap-friendly */
-        button, a, .egor-file-item {
-            touch-action: manipulation;
-            -webkit-tap-highlight-color: transparent;
+        /* ====== LANDSCAPE + TOUCH — hide rotation screen ====== */
+        @media (orientation: landscape) and (hover: none) and (pointer: coarse) {
+            #mobile-rotate-screen {
+                display: none !important;
+            }
+        }
+
+        /* ====== DESKTOP FALLBACK (non-touch) — keep original ====== */
+        @media (hover: hover) and (pointer: fine) {
+            #mobile-rotate-screen {
+                display: none !important;
+            }
+            #mobile-power-btn {
+                display: none !important;
+            }
         }
     </style>
 </head>
@@ -429,6 +619,24 @@
             <source src="assets/video/bg-history.mp4" type="video/mp4">
         </video>
         <div class="video-overlay"></div>
+    </div>
+
+    <!-- Mobile rotation screen -->
+    <div id="mobile-rotate-screen">
+        <div class="rotate-icon-wrap">
+            <div class="rotate-phone"></div>
+            <div class="rotate-arrow">
+                <i class="fas fa-undo-alt"></i>
+            </div>
+        </div>
+        <div class="rotate-title">Поверните устройство</div>
+        <div class="rotate-subtitle">Для работы с системой OCEAN OS переведите телефон в горизонтальный режим</div>
+        <div class="rotate-brand">OCEAN OS</div>
+    </div>
+
+    <!-- Floating power button for mobile -->
+    <div id="mobile-power-btn">
+        <i class="fas fa-power-off"></i>
     </div>
 
     <!-- Audio unlock overlay for mobile -->
@@ -607,6 +815,7 @@
         (function() {
             // ========== MOBILE DETECTION ==========
             const isTouchDevice = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
+            const isMobileLandscape = () => isTouchDevice && window.innerHeight < 500 && window.innerWidth > window.innerHeight;
             
             // ========== AUDIO CONTEXT UNLOCK ==========
             const audioUnlockOverlay = document.getElementById('audio-unlock');
@@ -839,7 +1048,7 @@
             }
 
             // ========== DESKTOP ==========
-            const isMobile = window.innerWidth <= 768;
+            const isMobile = isTouchDevice;
 
             function populateDesktop() {
                 desktopIconsContainer.innerHTML = '';
@@ -911,7 +1120,7 @@
             // ========== UI HANDLERS ==========
             startBtn.onclick = () => { playSound(audioClickObj); startMenu.classList.toggle('hidden'); };
             startExplorer.onclick = () => { playSound(audioClickObj); startMenu.classList.add('hidden'); winExplorer.classList.remove('hidden'); currentPath = []; renderExplorer(); };
-            startShutdown.onclick = () => { playSound(audioClickObj); startMenu.classList.add('hidden'); btnPwr.click(); };
+            startShutdown.onclick = () => { playSound(audioClickObj); startMenu.classList.add('hidden'); doPowerToggle(); };
             osWorkspace.onclick = (e) => { if (e.target === osWorkspace && !startMenu.classList.contains('hidden')) startMenu.classList.add('hidden'); };
             navBack.onclick = () => { playSound(audioClickObj); if (currentPath.length > 0) { currentPath.pop(); renderExplorer(); } };
             winExplorerClose.onclick = () => { playSound(audioClickObj); winExplorer.classList.add('hidden'); };
@@ -962,7 +1171,7 @@
             }
 
             // ========== POWER BUTTON ==========
-            btnPwr.onclick = () => {
+            function doPowerToggle() {
                 playSound(audioClickObj);
                 // Unlock audio on first power press (for mobile)
                 if (!audioContextUnlocked && isTouchDevice) unlockAudioContext();
@@ -991,6 +1200,9 @@
                     audioPwr.pause();
                     // Hide touch dot
                     if (touchDot) touchDot.style.opacity = '0';
+                    // Update mobile power btn
+                    const mpb = document.getElementById('mobile-power-btn');
+                    if (mpb) mpb.classList.remove('on');
                 } else {
                     isPcOn = true;
                     pwrIcon.classList.remove('text-gray-500');
@@ -1022,8 +1234,22 @@
                             audioNoise.play().catch(e=>{});
                         }, 200);
                     };
+                    // Update mobile power btn
+                    const mpb = document.getElementById('mobile-power-btn');
+                    if (mpb) mpb.classList.add('on');
                 }
-            };
+            }
+
+            btnPwr.onclick = doPowerToggle;
+
+            // ========== MOBILE FLOATING POWER BUTTON ==========
+            const mobilePowerBtn = document.getElementById('mobile-power-btn');
+            if (mobilePowerBtn) {
+                mobilePowerBtn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    doPowerToggle();
+                });
+            }
         })();
     </script>
 </body>
