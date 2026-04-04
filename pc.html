@@ -170,48 +170,13 @@
             }
         }
 
-        /* Touch cursor */
-        .touch-ripple {
-            position: absolute;
-            width: 30px;
-            height: 30px;
-            border-radius: 50%;
-            background: rgba(168, 85, 247, 0.3);
-            border: 2px solid rgba(168, 85, 247, 0.6);
-            pointer-events: none;
-            z-index: 999;
-            transform: translate(-50%, -50%) scale(0.5);
-            opacity: 1;
-            animation: ripple-expand 0.5s ease-out forwards;
+        /* Ensure all interactive elements are tap-friendly */
+        button,
+        a,
+        .egor-file-item {
+            touch-action: manipulation;
+            -webkit-tap-highlight-color: transparent;
         }
-
-        @keyframes ripple-expand {
-            0% {
-                transform: translate(-50%, -50%) scale(0.5);
-                opacity: 1;
-            }
-
-            100% {
-                transform: translate(-50%, -50%) scale(1.5);
-                opacity: 0;
-            }
-        }
-
-        .touch-dot {
-            position: absolute;
-            width: 12px;
-            height: 12px;
-            border-radius: 50%;
-            background: rgba(168, 85, 247, 0.7);
-            border: 1px solid rgba(255, 255, 255, 0.3);
-            pointer-events: none;
-            z-index: 998;
-            transform: translate(-50%, -50%);
-            transition: opacity 0.15s ease;
-            box-shadow: 0 0 8px rgba(168, 85, 247, 0.5);
-        }
-
-        /* Audio unlock overlay */
         .audio-unlock-overlay {
             position: fixed;
             inset: 0;
@@ -419,337 +384,90 @@
             box-shadow: 0 0 20px rgba(59, 130, 246, 0.3);
         }
 
-        /* ====== MOBILE LANDSCAPE — FULL PC SETUP ADAPTATION ====== */
-        @media (max-height: 550px) and (orientation: landscape) and (hover: none) and (pointer: coarse) {
-
-            /* Allow body scrolling on mobile */
+        /* ====== MOBILE ADAPTATION — 100% PARITY ====== */
+        @media (hover: none) and (pointer: coarse) {
+            
+            /* Enable body scrolling and proper height */
             body {
                 overflow: auto !important;
                 height: auto !important;
                 min-height: 100vh !important;
             }
 
-            /* Header — very compact */
-            header .header-content {
-                height: 34px !important;
-                padding-left: 0.75rem !important;
-                padding-right: 0.75rem !important;
-            }
-
-            .logo-text {
-                font-size: 0.85rem !important;
-                letter-spacing: 0 !important;
-            }
-
-            header nav {
-                gap: 0.75rem !important;
-            }
-
-            header nav a {
-                font-size: 0.7rem !important;
-            }
-
-            /* Workspace — allow scroll, center content */
+            /* Workspace — center content and preserve layout */
             .pc-workspace {
-                padding: 0.5rem !important;
+                padding: 1rem !important;
                 overflow: visible !important;
                 display: flex !important;
                 align-items: center !important;
                 justify-content: center !important;
-                min-height: calc(100vh - 34px) !important;
+                min-height: calc(100vh - 72px) !important;
                 flex: none !important;
             }
 
-            /* NO transform — just proper sizing with CSS */
             .pc-main-layout {
-                flex-direction: row !important;
+                flex-direction: column !important;
                 max-width: none !important;
-                gap: 1rem !important;
-                align-items: flex-end !important;
+                gap: 2rem !important;
+                align-items: center !important;
                 width: auto !important;
             }
 
-            /* Monitor wrap — size to fit viewport */
+            /* Hide the power button on the sysunit for mobile as requested */
+            .sysunit-power {
+                display: none !important;
+            }
+
+            /* Display floating power button */
+            #mobile-power-btn {
+                display: flex !important;
+            }
+
+            /* Responsive monitor sizing */
             #egor-pc-monitor-wrap {
                 transform: none !important;
-                max-width: min(55vw, 500px) !important;
-                width: 55vw !important;
+                max-width: 95vw !important;
+                width: 95vw !important;
             }
 
-            /* Keep decorative elements! */
+            /* Reduce monitor border on mobile */
+            #egor-pc-monitor-wrap > div:first-child {
+                border-width: 8px !important;
+            }
+        }
+
+        /* Landscape specific tweaks for mobile */
+        @media (max-height: 550px) and (orientation: landscape) and (hover: none) and (pointer: coarse) {
+            .pc-main-layout {
+                flex-direction: row !important;
+                align-items: flex-end !important;
+                gap: 1.5rem !important;
+            }
+
+            #egor-pc-monitor-wrap {
+                max-width: min(65vw, 550px) !important;
+            }
+
             .pc-sysunit {
-                display: flex !important;
-                width: 80px !important;
-                height: calc(100vh - 100px) !important;
-                max-height: 240px !important;
+                height: 180px !important;
+                width: 100px !important;
             }
 
-            .monitor-stand-neck {
-                display: block !important;
-                width: 60px !important;
-                height: 10px !important;
+            header .header-content {
+                height: 40px !important;
             }
 
-            .monitor-stand-base {
-                display: block !important;
-                width: 80px !important;
-                height: 6px !important;
-            }
-
-            /* System unit internals — scale proportionally */
-            .pc-sysunit .sysunit-leds {
-                height: 1.25rem !important;
-                padding: 0 0.5rem !important;
-            }
-
-            .pc-sysunit .sysunit-bays > div {
-                height: 1.25rem !important;
-            }
-
-            .pc-sysunit .sysunit-power {
-                height: 3.5rem !important;
-            }
-
-            .pc-sysunit .sysunit-power button {
-                width: 2.5rem !important;
-                height: 2.5rem !important;
-            }
-
-            .pc-sysunit .sysunit-power button i {
+            .logo-text {
                 font-size: 1rem !important;
             }
 
-            /* Monitor screen border — thinner on mobile */
-            #egor-pc-monitor-wrap > div:first-child {
-                border-width: 6px !important;
-            }
-
-            /* Show floating power button */
-            #mobile-power-btn {
-                display: flex !important;
-            }
-
-            /* Boot logo */
-            #egor-pc-boot-logo {
-                font-size: 1.5rem !important;
-            }
-            #egor-pc-boot-logo i {
-                font-size: 1.8rem !important;
-            }
-
-            /* Desktop icons — fit inside the smaller monitor */
-            #os-desktop-icons {
-                padding: 0.5rem !important;
-                gap: 0.5rem !important;
-            }
-
-            #os-desktop-icons > div {
-                width: 4rem !important;
-                min-height: 3rem !important;
-            }
-
-            #os-desktop-icons > div i {
-                font-size: 1.4rem !important;
-            }
-
-            #os-desktop-icons > div span {
-                font-size: 0.5rem !important;
-            }
-
-            /* Taskbar — touch-friendly inside the monitor */
-            #os-taskbar {
-                height: 2rem !important;
-                padding-left: 0.5rem !important;
-                padding-right: 0.5rem !important;
-            }
-
-            #os-taskbar button {
-                width: 1.75rem !important;
-                height: 1.75rem !important;
-                min-width: 1.75rem !important;
-            }
-
-            #os-taskbar button i {
-                font-size: 0.8rem !important;
-            }
-
-            #os-taskbar-time {
-                font-size: 0.6rem !important;
-            }
-
-            #os-taskbar-date {
-                font-size: 0.45rem !important;
-            }
-
-            /* Explorer window — fit inside monitor */
-            #os-window-explorer,
-            #os-window-notepad {
-                width: 90% !important;
-                height: 85% !important;
-            }
-
-            #os-window-explorer > div:first-child,
-            #os-window-explorer > div:nth-child(2),
-            #os-window-notepad > div:first-child {
-                height: 1.5rem !important;
-                min-height: 1.5rem !important;
-            }
-
-            #os-window-explorer > div:first-child span,
-            #os-window-notepad > div:first-child span {
-                font-size: 0.55rem !important;
-            }
-
-            #os-explorer-content {
-                padding: 0.4rem !important;
-            }
-
-            #os-explorer-content .grid {
-                grid-template-columns: repeat(4, 1fr) !important;
-                gap: 0.3rem !important;
-            }
-
-            #os-explorer-content .egor-file-item {
-                padding: 0.25rem !important;
-            }
-
-            #os-explorer-content .egor-file-item i {
-                font-size: 1.2rem !important;
-                margin-bottom: 0.15rem !important;
-            }
-
-            #os-explorer-content .egor-file-item span {
-                font-size: 0.45rem !important;
-            }
-
-            /* Path bar */
-            #os-path-bar {
-                font-size: 0.5rem !important;
-                padding: 0.15rem 0.3rem !important;
-            }
-
-            #os-window-title {
-                font-size: 0.55rem !important;
-            }
-
-            /* Password window */
-            #os-window-password {
-                width: 70% !important;
-                max-width: 240px !important;
-                padding: 1rem !important;
-            }
-
-            #os-window-password i.fa-lock {
-                font-size: 1.8rem !important;
-                margin-bottom: 0.5rem !important;
-            }
-
-            #os-window-password h5 {
-                font-size: 0.75rem !important;
-                margin-bottom: 0.5rem !important;
-            }
-
-            #os-window-password input {
-                font-size: 0.8rem !important;
-                padding: 0.3rem 0.5rem !important;
-            }
-
-            #os-window-password button#os-pwd-submit {
-                font-size: 0.7rem !important;
-                padding: 0.3rem !important;
-            }
-
-            /* Notepad content */
-            #os-notepad-content {
-                font-size: 0.65rem !important;
-                padding: 0.5rem !important;
-            }
-
-            /* Gallery */
-            #gallery-prev,
-            #gallery-next {
-                width: 32px !important;
-                height: 32px !important;
-                opacity: 0.9 !important;
-            }
-
-            #gallery-prev { left: 0.5rem !important; }
-            #gallery-next { right: 0.5rem !important; }
-
-            #os-window-gallery > div:first-child {
-                height: 1.75rem !important;
-            }
-
-            #os-window-gallery > div:first-child span {
-                font-size: 0.55rem !important;
-            }
-
-            /* Start menu */
-            #os-start-menu {
-                width: 160px !important;
-                bottom: 2.25rem !important;
-                border-radius: 0.5rem !important;
-            }
-
-            #os-start-menu .px-5 {
-                padding: 0.4rem 0.5rem !important;
-            }
-
-            #os-start-menu .w-10 {
-                width: 1.5rem !important;
-                height: 1.5rem !important;
-            }
-
-            #os-start-menu .text-sm {
-                font-size: 0.6rem !important;
-            }
-
-            #os-start-menu button {
-                padding: 0.35rem 0.5rem !important;
-                font-size: 0.55rem !important;
-            }
-
-            /* Touch effects — proportional to monitor size */
-            .touch-ripple {
-                width: 20px !important;
-                height: 20px !important;
-            }
-            .touch-dot {
-                width: 8px !important;
-                height: 8px !important;
-            }
-        }
-
-        /* ====== PORTRAIT + TOUCH — show rotation screen ====== */
-        @media (orientation: portrait) and (hover: none) and (pointer: coarse) {
-            #mobile-rotate-screen {
-                display: flex !important;
-            }
-
-            /* Hide everything else */
-            header,
-            .pc-workspace,
-            .video-container,
-            .video-overlay,
-            #audio-unlock,
-            #mobile-power-btn {
-                display: none !important;
-            }
-        }
-
-        /* ====== LANDSCAPE + TOUCH — hide rotation screen ====== */
-        @media (orientation: landscape) and (hover: none) and (pointer: coarse) {
-            #mobile-rotate-screen {
-                display: none !important;
+            .pc-workspace {
+                min-height: calc(100vh - 40px) !important;
             }
         }
 
         /* ====== DESKTOP FALLBACK (non-touch) — keep original ====== */
         @media (hover: hover) and (pointer: fine) {
-            #mobile-rotate-screen {
-                display: none !important;
-            }
-
             #mobile-power-btn {
                 display: none !important;
             }
@@ -765,18 +483,6 @@
         <div class="video-overlay"></div>
     </div>
 
-    <!-- Mobile rotation screen -->
-    <div id="mobile-rotate-screen">
-        <div class="rotate-icon-wrap">
-            <div class="rotate-phone"></div>
-            <div class="rotate-arrow">
-                <i class="fas fa-undo-alt"></i>
-            </div>
-        </div>
-        <div class="rotate-title">Поверните устройство</div>
-        <div class="rotate-subtitle">Для работы с системой OCEAN OS переведите телефон в горизонтальный режим</div>
-        <div class="rotate-brand">OCEAN OS</div>
-    </div>
 
     <!-- Floating power button for mobile -->
     <div id="mobile-power-btn">
@@ -1025,7 +731,6 @@
         (function () {
             // ========== MOBILE DETECTION ==========
             const isTouchDevice = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
-            const isMobileLandscape = () => isTouchDevice && window.innerHeight < 500 && window.innerWidth > window.innerHeight;
 
             // ========== AUDIO CONTEXT UNLOCK ==========
             const audioUnlockOverlay = document.getElementById('audio-unlock');
@@ -1055,49 +760,6 @@
                 audioUnlockOverlay.addEventListener('touchend', unlockAudioContext, { once: true });
             }
 
-            // ========== TOUCH CURSOR ==========
-            const monitorScreen = document.querySelector('#egor-pc-screen-os');
-            let touchDot = null;
-
-            if (isTouchDevice && monitorScreen) {
-                touchDot = document.createElement('div');
-                touchDot.className = 'touch-dot';
-                touchDot.style.opacity = '0';
-                monitorScreen.style.position = 'relative';
-                monitorScreen.appendChild(touchDot);
-
-                monitorScreen.addEventListener('touchstart', (e) => {
-                    const touch = e.touches[0];
-                    const rect = monitorScreen.getBoundingClientRect();
-                    const x = touch.clientX - rect.left;
-                    const y = touch.clientY - rect.top;
-
-                    touchDot.style.left = x + 'px';
-                    touchDot.style.top = y + 'px';
-                    touchDot.style.opacity = '1';
-
-                    // Create ripple
-                    const ripple = document.createElement('div');
-                    ripple.className = 'touch-ripple';
-                    ripple.style.left = x + 'px';
-                    ripple.style.top = y + 'px';
-                    monitorScreen.appendChild(ripple);
-                    setTimeout(() => ripple.remove(), 500);
-                }, { passive: true });
-
-                monitorScreen.addEventListener('touchmove', (e) => {
-                    const touch = e.touches[0];
-                    const rect = monitorScreen.getBoundingClientRect();
-                    const x = touch.clientX - rect.left;
-                    const y = touch.clientY - rect.top;
-                    touchDot.style.left = x + 'px';
-                    touchDot.style.top = y + 'px';
-                }, { passive: true });
-
-                monitorScreen.addEventListener('touchend', () => {
-                    setTimeout(() => { if (touchDot) touchDot.style.opacity = '0'; }, 300);
-                }, { passive: true });
-            }
 
             // ========== SWIPE SUPPORT FOR GALLERY ==========
             let touchStartX = 0;
@@ -1419,11 +1081,10 @@
                     clearInterval(clockInterval);
                     ledHdd.classList.remove('opacity-100');
                     ledHdd.classList.add('opacity-30');
+                    // Play/Pause noise
                     audioNoise.pause();
                     audioNoise.currentTime = 0;
                     audioPwr.pause();
-                    // Hide touch dot
-                    if (touchDot) touchDot.style.opacity = '0';
                     // Update mobile power btn
                     const mpb = document.getElementById('mobile-power-btn');
                     if (mpb) mpb.classList.remove('on');
