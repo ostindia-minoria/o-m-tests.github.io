@@ -1181,19 +1181,17 @@
                 dFiles.forEach(item => {
                     const el = document.createElement('div');
                     el.className = 'cursor-pointer hover:bg-white/10 p-2 rounded transition-colors group flex flex-col items-center';
-                    el.style.width = isMobile ? '4rem' : '6rem';
+                    el.style.width = '6rem';
                     if (item.id === 'sys_trash') {
                         el.classList.add('absolute');
-                        el.style.top = isMobile ? '0.25rem' : '2rem';
-                        el.style.right = isMobile ? '0.25rem' : '2rem';
+                        el.style.top = '2rem';
+                        el.style.right = '2rem';
                     } else if (item.id === 'readme') {
                         el.classList.add('absolute');
-                        el.style.bottom = isMobile ? '0.25rem' : '2rem';
-                        el.style.left = isMobile ? '0.25rem' : '2rem';
+                        el.style.bottom = '2rem';
+                        el.style.left = '2rem';
                     }
-                    const iconSize = isMobile ? 'text-xl' : 'text-4xl';
-                    const textSize = isMobile ? 'text-[0.55rem]' : 'text-xs';
-                    el.innerHTML = '<i class="fas ' + item.icon + ' ' + iconSize + ' drop-shadow-md mb-1"></i><span class="' + textSize + ' text-white text-center shadow-[0_1px_3px_rgba(0,0,0,0.8)] group-hover:bg-blue-600/80 rounded px-1 py-0.5 leading-tight">' + item.name + '</span>';
+                    el.innerHTML = '<i class="fas ' + item.icon + ' text-4xl drop-shadow-md mb-1"></i><span class="text-xs text-white text-center shadow-[0_1px_3px_rgba(0,0,0,0.8)] group-hover:bg-blue-600/80 rounded px-1 py-0.5 leading-tight">' + item.name + '</span>';
                     el.onclick = () => {
                         playSound(audioClickObj);
                         if (item.type === 'app_computer') { currentPath = []; winExplorer.classList.remove('hidden'); renderExplorer(); }
@@ -1222,15 +1220,12 @@
                 else navBack.classList.remove('opacity-50', 'pointer-events-none');
                 if (!dir || !dir.children) return;
                 const grid = document.createElement('div');
-                const cols = isMobile ? 'grid-cols-3' : 'grid-cols-4 sm:grid-cols-5 md:grid-cols-6';
-                grid.className = 'grid ' + cols + ' gap-2 sm:gap-4';
+                grid.className = 'grid grid-cols-4 sm:grid-cols-5 md:grid-cols-6 gap-2 sm:gap-4';
                 dir.children.forEach(item => {
                     if (item.type === 'hidden') return;
                     const el = document.createElement('div');
-                    const iconSz = isMobile ? 'text-2xl' : 'text-4xl';
-                    const textSz = isMobile ? 'text-[0.6rem]' : 'text-xs';
                     el.className = 'egor-file-item p-2 sm:p-3 rounded-lg hover:bg-blue-50 cursor-pointer flex flex-col items-center text-center transition-all hover:scale-105';
-                    el.innerHTML = '<i class="fas ' + item.icon + ' ' + iconSz + ' mb-1 sm:mb-2 drop-shadow-sm"></i><span class="' + textSz + ' text-gray-700 leading-tight font-medium" title="' + item.name + '">' + item.name + '</span>';
+                    el.innerHTML = '<i class="fas ' + item.icon + ' text-4xl mb-1 sm:mb-2 drop-shadow-sm"></i><span class="text-xs text-gray-700 leading-tight font-medium" title="' + item.name + '">' + item.name + '</span>';
                     el.onclick = () => {
                         playSound(audioClickObj);
                         if (item.type === 'folder' || item.type === 'drive' || item.type === 'network' || item.type === 'network_pc') { currentPath.push(item.id); renderExplorer(); }
@@ -1306,6 +1301,7 @@
                     screenOff.classList.remove('hidden');
                     screenBoot.classList.add('hidden');
                     screenOs.classList.add('hidden');
+                    screenOs.style.display = '';
                     winExplorer.classList.add('hidden');
                     winPassword.classList.add('hidden');
                     winNotepad.classList.add('hidden');
@@ -1353,6 +1349,7 @@
                             if (!isPcOn) return;
                             screenBoot.classList.add('hidden');
                             screenOs.classList.remove('hidden');
+                            screenOs.style.display = 'flex';
                             populateDesktop();
                             updateClock();
                             clockInterval = setInterval(updateClock, 30000);
