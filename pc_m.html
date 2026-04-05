@@ -159,10 +159,17 @@
         /* Вся область «экрана» ОС — одна зона для курсора (рабочий стол + панель задач + меню) */
         #egor-pc-screen-os {
             position: relative;
+            height: 100%;
+            min-height: 0;
+            box-sizing: border-box;
         }
 
         #egor-pc-screen-os.touch-cursor-capture {
             touch-action: none;
+        }
+
+        #os-workspace {
+            min-height: 0;
         }
 
         /* Виртуальный курсор: координаты в % от полного экрана монитора */
@@ -199,11 +206,23 @@
             border-radius: 4px;
         }
 
+        /* Рамка экрана: классическая 16:9, без раздувания flex’ом */
+        .pc-monitor-bezel {
+            width: 100%;
+            max-width: 100%;
+            aspect-ratio: 16 / 9;
+            height: auto;
+            flex-shrink: 0;
+        }
+
         /* Как на pc.html: монитор + системный блок в ряд */
         #egor-pc-monitor-wrap {
-            flex: 1 1 auto;
+            flex: 1 1 0%;
             min-width: 0;
             max-width: min(800px, 100%);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
         }
 
         #egor-pc-monitor-wrap .monitor-stand-neck {
@@ -435,6 +454,12 @@
                 font-size: 0.75rem !important;
             }
 
+            header .container {
+                max-width: 100% !important;
+                padding-left: 0.5rem !important;
+                padding-right: 0.5rem !important;
+            }
+
             .pc-workspace {
                 padding: 0.4rem 0.5rem 0.6rem !important;
                 overflow: hidden !important;
@@ -453,22 +478,30 @@
                 width: 100% !important;
                 max-width: 100% !important;
                 flex-wrap: nowrap !important;
+                overflow-x: hidden !important;
+                box-sizing: border-box !important;
             }
 
-            /* Монитор + подставка целиком помещаются под шапку и отступы (запас по высоте) */
+            /*
+             * Монитор не должен расти за счёт flex-grow (иначе вылезает за край).
+             * Ширина рамки — min(оставшееся место в ряду, лимит по высоте 16:9).
+             */
             #egor-pc-monitor-wrap {
-                flex: 1 1 auto !important;
+                flex: 1 1 0% !important;
                 min-width: 0 !important;
-                width: min(
-                    calc(100vw - 6.75rem),
-                    calc((100dvh - 9.5rem) * 16 / 9),
-                    calc((100vh - 9.5rem) * 16 / 9)
-                ) !important;
-                max-width: none !important;
+                max-width: calc(100% - 4.75rem) !important;
+                width: auto !important;
             }
 
-            #egor-pc-monitor-wrap>div:first-child {
+            #egor-pc-monitor-wrap>div.pc-monitor-bezel:first-child {
                 border-width: 5px !important;
+                width: min(100%, 88vw, calc((100vh - 9rem) * 16 / 9)) !important;
+                width: min(100%, 88vw, calc((min(100vh, 100dvh) - 9rem) * 16 / 9)) !important;
+                max-width: 100% !important;
+                aspect-ratio: 16 / 9 !important;
+                height: auto !important;
+                max-height: calc(100vh - 8.75rem) !important;
+                max-height: calc(100dvh - 8.75rem) !important;
             }
 
             #egor-pc-monitor-wrap .monitor-stand-neck {
@@ -480,8 +513,8 @@
             }
 
             .pc-sysunit {
-                width: clamp(3rem, 12vw, 4.85rem) !important;
-                height: clamp(8.5rem, min(32dvh, 32vh), 13rem) !important;
+                width: clamp(3rem, 11vw, 4.5rem) !important;
+                height: clamp(8rem, min(30dvh, 30vh), 12.5rem) !important;
                 flex-shrink: 0 !important;
                 align-self: flex-end !important;
                 margin-bottom: 0.08rem !important;
@@ -511,14 +544,12 @@
                 padding: 0.25rem 0.4rem !important;
             }
 
-            #egor-pc-monitor-wrap {
-                width: min(
-                    calc(100vw - 6rem),
-                    calc((100dvh - 8rem) * 16 / 9),
-                    calc((100vh - 8rem) * 16 / 9)
-                ) !important;
+            #egor-pc-monitor-wrap>div.pc-monitor-bezel:first-child {
+                width: min(100%, 85vw, calc((100vh - 7.5rem) * 16 / 9)) !important;
+                width: min(100%, 85vw, calc((min(100vh, 100dvh) - 7.5rem) * 16 / 9)) !important;
+                max-height: calc(100vh - 7.25rem) !important;
+                max-height: calc(100dvh - 7.25rem) !important;
             }
-
         }
     </style>
 </head>
@@ -575,7 +606,7 @@
             <div id="egor-pc-monitor-wrap"
                 class="relative w-full max-w-[800px] flex flex-col items-center shrink transition-all duration-500">
                 <div
-                    class="w-full bg-black rounded-lg border-4 sm:border-[12px] border-gray-800 shadow-[0_30px_60px_rgba(0,0,0,0.9)] relative overflow-hidden aspect-video">
+                    class="pc-monitor-bezel w-full bg-black rounded-lg border-4 sm:border-[12px] border-gray-800 shadow-[0_30px_60px_rgba(0,0,0,0.9)] relative overflow-hidden aspect-video">
 
                     <!-- Выключен -->
                     <div id="egor-pc-screen-off" class="absolute inset-0 bg-black z-50"></div>
@@ -849,6 +880,39 @@
             const audioKeyObj = new Audio('assets/sounds/key.mp3');
 
             let isPcOn = false;
+            let bootCompleted = false;
+            let bootFallbackTimer = null;
+
+            function clearBootFallback() {
+                if (bootFallbackTimer) {
+                    clearTimeout(bootFallbackTimer);
+                    bootFallbackTimer = null;
+                }
+            }
+
+            function finishBootToOs() {
+                clearBootFallback();
+                if (!isPcOn || bootCompleted) return;
+                bootCompleted = true;
+                bootLogo.classList.remove('opacity-100');
+                bootLogo.classList.add('opacity-0');
+                setTimeout(() => {
+                    if (!isPcOn) return;
+                    screenBoot.classList.add('hidden');
+                    screenOs.classList.remove('hidden');
+                    screenOs.style.display = 'flex';
+                    if (isTouchDevice) screenOs.classList.add('touch-cursor-capture');
+                    populateDesktop();
+                    updateClock();
+                    clockInterval = setInterval(updateClock, 30000);
+                    audioNoise.play().catch(() => { });
+                    if (isTouchDevice && vCursor) {
+                        vCursor.classList.add('active');
+                        cursorX = 50; cursorY = 50;
+                        updateVCursor();
+                    }
+                }, 200);
+            }
 
             function unlockAudioContext() {
                 if (audioContextUnlocked) return;
@@ -1206,6 +1270,8 @@
 
                 if (isPcOn) {
                     isPcOn = false;
+                    clearBootFallback();
+                    bootCompleted = false;
                     if (vCursor) vCursor.classList.remove('active');
                     screenOff.classList.remove('hidden');
                     screenBoot.classList.add('hidden');
@@ -1249,29 +1315,18 @@
                         bootLogo.classList.remove('opacity-0');
                         bootLogo.classList.add('opacity-100');
                     }, 50);
+                    bootCompleted = false;
+                    clearBootFallback();
+                    audioPwr.onended = null;
                     audioPwr.currentTime = 0;
-                    audioPwr.play().catch(() => { });
                     audioPwr.onended = () => {
                         if (!isPcOn) return;
-                        bootLogo.classList.remove('opacity-100');
-                        bootLogo.classList.add('opacity-0');
-                        setTimeout(() => {
-                            if (!isPcOn) return;
-                            screenBoot.classList.add('hidden');
-                            screenOs.classList.remove('hidden');
-                            screenOs.style.display = 'flex';
-                            if (isTouchDevice) screenOs.classList.add('touch-cursor-capture');
-                            populateDesktop();
-                            updateClock();
-                            clockInterval = setInterval(updateClock, 30000);
-                            audioNoise.play().catch(() => { });
-                            if (isTouchDevice && vCursor) {
-                                vCursor.classList.add('active');
-                                cursorX = 50; cursorY = 50;
-                                updateVCursor();
-                            }
-                        }, 200);
+                        finishBootToOs();
                     };
+                    bootFallbackTimer = setTimeout(() => finishBootToOs(), 5500);
+                    audioPwr.play().catch(() => {
+                        setTimeout(() => finishBootToOs(), 450);
+                    });
                     if (mobilePowerBtn) mobilePowerBtn.classList.add('on');
                 }
             }
