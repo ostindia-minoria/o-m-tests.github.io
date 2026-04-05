@@ -156,14 +156,14 @@
             }
         }
 
-        /* ====== STANDARD MOBILE CURSOR (Winlator-style) ====== */
-        #standard-cursor {
+        /* Виртуальный курсор (логика как в pc.html) */
+        #virtual-cursor {
             position: absolute;
-            width: 28px;
-            height: 28px;
+            width: 24px;
+            height: 24px;
             pointer-events: none;
             z-index: 9999;
-            filter: drop-shadow(0 2px 5px rgba(0, 0, 0, 0.4));
+            filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.5));
             display: none;
             top: 50%;
             left: 50%;
@@ -172,13 +172,16 @@
             transition: transform 0.1s ease-out;
         }
 
-        #standard-cursor.active {
+        #virtual-cursor.active {
             display: block;
         }
 
-        .cursor-arrow-svg {
+        .cursor-pointer-svg {
             width: 100%;
             height: 100%;
+            fill: white;
+            stroke: black;
+            stroke-width: 1px;
         }
 
         /* Hover simulation highlight */
@@ -187,14 +190,31 @@
             border-radius: 4px;
         }
 
-        /* Full page tweaks for monitor size */
         #egor-pc-monitor-wrap {
-            transform: scale(1.1);
+            width: min(100%, 95vw);
+            max-width: min(800px, 100%);
         }
 
-        @media (max-width: 1024px) {
-            #egor-pc-monitor-wrap {
-                transform: scale(1);
+        #egor-pc-monitor-wrap .monitor-stand-neck {
+            width: min(8rem, 28vw);
+        }
+
+        #egor-pc-monitor-wrap .monitor-stand-base {
+            width: min(12rem, 42vw);
+        }
+
+        @media (max-width: 480px) {
+            .pc-workspace {
+                padding: 0.75rem !important;
+            }
+
+            .pc-main-layout {
+                gap: 1rem !important;
+            }
+
+            .pc-sysunit {
+                width: min(7rem, 22vw) !important;
+                height: min(18rem, 48vh) !important;
             }
         }
 
@@ -253,129 +273,59 @@
             }
         }
 
-        /* ====== MOBILE ROTATION SCREEN ====== */
-        #mobile-rotate-screen {
-            position: fixed;
-            inset: 0;
-            z-index: 10000;
-            background: radial-gradient(circle at center, #111827 0%, #030712 100%);
+        /* Экранная клавиатура (поле пароля) */
+        #os-screen-keyboard {
+            position: absolute;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            z-index: 100;
             display: none;
             flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            gap: 2rem;
-            color: white;
-            text-align: center;
-            padding: 2rem;
-            backdrop-filter: blur(20px);
+            background: rgba(17, 24, 39, 0.97);
+            border-top: 1px solid rgba(255, 255, 255, 0.12);
+            padding: 0.5rem 0.5rem max(0.5rem, env(safe-area-inset-bottom));
+            touch-action: manipulation;
+            -webkit-user-select: none;
+            user-select: none;
         }
 
-        #mobile-rotate-screen.visible {
+        #os-screen-keyboard.visible {
             display: flex;
         }
 
-        /* BLOCK INTERACTION IN PORTRAIT */
-        @media (orientation: portrait) {
-            #egor-pc-monitor-wrap, 
-            .pc-sysunit, 
-            #mobile-power-btn,
-            header {
-                pointer-events: none !important;
-            }
-        }
-
-        .rotate-icon-container {
-            position: relative;
-            width: 120px;
-            height: 120px;
+        #os-screen-keyboard .os-kbd-row {
             display: flex;
-            align-items: center;
             justify-content: center;
+            gap: 0.35rem;
+            margin-bottom: 0.35rem;
         }
 
-        .rotate-phone-icon {
-            width: 50px;
-            height: 90px;
-            border: 3px solid #6366f1;
-            border-radius: 12px;
-            background: rgba(99, 102, 241, 0.1);
-            position: relative;
-            animation: rotateDevice 3s cubic-bezier(0.65, 0, 0.35, 1) infinite;
-            box-shadow: 0 0 30px rgba(99, 102, 241, 0.3);
-        }
-
-        .rotate-phone-icon::after {
-            content: '';
-            position: absolute;
-            bottom: 8px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 10px;
-            height: 10px;
-            border-radius: 50%;
-            background: #6366f1;
-        }
-
-        @keyframes rotateDevice {
-            0% {
-                transform: rotate(0deg);
-                opacity: 0.5;
-            }
-
-            25% {
-                transform: rotate(-90deg);
-                opacity: 1;
-            }
-
-            75% {
-                transform: rotate(-90deg);
-                opacity: 1;
-            }
-
-            100% {
-                transform: rotate(0deg);
-                opacity: 0.5;
-            }
-        }
-
-        .rotate-ring {
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            border: 2px dashed rgba(99, 102, 241, 0.2);
-            border-radius: 50%;
-            animation: spinRing 10s linear infinite;
-        }
-
-        @keyframes spinRing {
-            from {
-                transform: rotate(0deg);
-            }
-
-            to {
-                transform: rotate(360deg);
-            }
-        }
-
-        .rotate-title {
-            font-size: 1.5rem;
-            font-weight: 800;
-            background: linear-gradient(to right, #fff, #94a3b8);
-            -webkit-background-clip: text;
-            background-clip: text;
-            -webkit-text-fill-color: transparent;
-            margin-bottom: 0.5rem;
-        }
-
-        .rotate-subtitle {
+        #os-screen-keyboard .os-kbd-key {
+            min-width: 2.5rem;
+            height: 2.5rem;
+            padding: 0 0.65rem;
+            border-radius: 0.5rem;
+            background: rgba(55, 65, 81, 0.95);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: #e5e7eb;
             font-size: 1rem;
-            color: #94a3b8;
-            max-width: 300px;
-            line-height: 1.6;
-            font-weight: 400;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
-        /* ====== FLOATING POWER BUTTON (mobile) ====== */
+        #os-screen-keyboard .os-kbd-key:active {
+            background: rgba(75, 85, 99, 0.95);
+            transform: scale(0.96);
+        }
+
+        #os-screen-keyboard .os-kbd-key.wide {
+            min-width: 4.5rem;
+        }
+
+        /* Плавающая кнопка питания (основная для этой страницы) */
         #mobile-power-btn {
             display: flex;
             position: fixed;
@@ -435,31 +385,13 @@
                 width: auto !important;
             }
 
-            /* Allow power button on sysunit for mobile as well */
-            .sysunit-power {
-                display: flex !important;
-                height: 60px !important;
-            }
-
-            #egor-pc-power-btn {
-                width: 40px !important;
-                height: 40px !important;
-            }
-
-            #pc-pwr-icon {
-                font-size: 1.2rem !important;
-            }
-
-            /* Responsive monitor sizing */
             #egor-pc-monitor-wrap {
-                transform: none !important;
-                max-width: 95vw !important;
-                width: 95vw !important;
+                max-width: 100% !important;
+                width: min(100%, 95vw) !important;
             }
 
-            /* Reduce monitor border on mobile */
             #egor-pc-monitor-wrap>div:first-child {
-                border-width: 8px !important;
+                border-width: 6px !important;
             }
         }
 
@@ -505,21 +437,9 @@
     </div>
 
 
-    <!-- ====== MOBILE ROTATION SCREEN ====== -->
-    <div id="mobile-rotate-screen">
-        <div class="rotate-icon-container">
-            <div class="rotate-ring"></div>
-            <div class="rotate-phone-icon"></div>
-        </div>
-        <div class="text-center">
-            <h2 class="rotate-title">Поверните устройство</h2>
-            <p class="rotate-subtitle">Для погружения в OCEAN OS требуется альбомная ориентация экрана</p>
-        </div>
-    </div>
-
-    <!-- Floating power button for mobile -->
+    <!-- Кнопка питания -->
     <div id="mobile-power-btn">
-        <i class="fas fa-power-off"></i>
+        <i class="fas fa-power-off text-gray-500 transition-colors" id="pc-pwr-icon"></i>
     </div>
 
     <!-- Audio unlock overlay for mobile -->
@@ -574,10 +494,9 @@
                         <div class="relative flex-1 w-full text-sm text-gray-200 select-none overflow-hidden text-left"
                             id="os-workspace">
 
-                            <!-- Стандартный мобильный курсор -->
-                            <div id="standard-cursor">
-                                <svg class="cursor-arrow-svg" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                    <path d="M10 2V29L18 21.2L22 29L25.5 27.5L21.5 19.5H30L10 2Z" fill="white" stroke="black" stroke-width="1.5" stroke-linejoin="round"/>
+                            <div id="virtual-cursor">
+                                <svg class="cursor-pointer-svg" viewBox="0 0 24 24">
+                                    <path d="M7 2l12 11.2-5.8.8 3.3 6-2.5 1.4-3.4-6.1L7 19z" />
                                 </svg>
                             </div>
 
@@ -594,7 +513,7 @@
                                     <span class="font-medium text-sm flex items-center gap-3" id="os-window-title"><i
                                             class="fas fa-hdd text-gray-500"></i> Этот компьютер</span>
                                     <button id="os-window-close"
-                                        class="text-gray-500 hover:text-red-500 transition-colors focus:outline-none"><i
+                                        class="text-gray-500 hover:text-orange-500 transition-colors focus:outline-none"><i
                                             class="fas fa-times text-lg"></i></button>
                                 </div>
                                 <div
@@ -618,10 +537,10 @@
                                         class="fas fa-times"></i></button>
                                 <i class="fas fa-lock text-4xl text-blue-500 mb-6"></i>
                                 <h5 class="text-base font-semibold mb-6 text-center">Требуется пароль</h5>
-                                <input type="password" id="os-pwd-input"
+                                <input type="password" id="os-pwd-input" inputmode="none" autocomplete="off"
                                     class="w-full border border-gray-300 rounded-lg px-4 py-2 text-center text-lg mb-3 focus:outline-none focus:border-blue-500 shadow-inner"
                                     placeholder="••••">
-                                <p id="os-pwd-error" class="text-red-500 text-xs hidden mb-4">Неверный пароль</p>
+                                <p id="os-pwd-error" class="text-orange-600 text-xs hidden mb-4">Неверный пароль</p>
                                 <button id="os-pwd-submit"
                                     class="w-full bg-blue-500 text-white rounded-lg py-2.5 font-medium hover:bg-blue-600 focus:outline-none transition-all active:scale-95 shadow-md">Войти</button>
                             </div>
@@ -636,7 +555,7 @@
                                         id="os-notepad-title"><i class="fas fa-file-alt text-blue-400"></i> pass.txt -
                                         Блокнот</span>
                                     <button id="os-notepad-close"
-                                        class="text-gray-500 hover:text-red-500 focus:outline-none shrink-0"><i
+                                        class="text-gray-500 hover:text-orange-500 focus:outline-none shrink-0"><i
                                             class="fas fa-times text-lg"></i></button>
                                 </div>
                                 <div class="flex-1 p-6 font-mono text-sm text-gray-800 bg-white"
@@ -672,6 +591,34 @@
                                     <button id="gallery-next"
                                         class="absolute right-6 top-1/2 -translate-y-1/2 w-12 h-12 bg-black/60 rounded-full flex items-center justify-center hover:bg-white/20 transition-all opacity-0 group-hover:opacity-100 z-10 focus:outline-none"><i
                                             class="fas fa-chevron-right text-lg"></i></button>
+                                </div>
+                            </div>
+
+                            <div id="os-screen-keyboard" aria-hidden="true">
+                                <div class="flex justify-between items-center px-1 pb-1 mb-1 border-b border-white/10">
+                                    <span class="text-[11px] text-gray-400">Клавиатура</span>
+                                    <button type="button" id="os-kbd-hide"
+                                        class="text-xs text-gray-400 px-2 py-1 rounded hover:bg-white/10 focus:outline-none">Скрыть</button>
+                                </div>
+                                <div class="os-kbd-row">
+                                    <button type="button" class="os-kbd-key" data-os-kbd="1">1</button>
+                                    <button type="button" class="os-kbd-key" data-os-kbd="2">2</button>
+                                    <button type="button" class="os-kbd-key" data-os-kbd="3">3</button>
+                                </div>
+                                <div class="os-kbd-row">
+                                    <button type="button" class="os-kbd-key" data-os-kbd="4">4</button>
+                                    <button type="button" class="os-kbd-key" data-os-kbd="5">5</button>
+                                    <button type="button" class="os-kbd-key" data-os-kbd="6">6</button>
+                                </div>
+                                <div class="os-kbd-row">
+                                    <button type="button" class="os-kbd-key" data-os-kbd="7">7</button>
+                                    <button type="button" class="os-kbd-key" data-os-kbd="8">8</button>
+                                    <button type="button" class="os-kbd-key" data-os-kbd="9">9</button>
+                                </div>
+                                <div class="os-kbd-row">
+                                    <button type="button" class="os-kbd-key wide" data-os-kbd="back">⌫</button>
+                                    <button type="button" class="os-kbd-key" data-os-kbd="0">0</button>
+                                    <button type="button" class="os-kbd-key wide" data-os-kbd="enter">↵</button>
                                 </div>
                             </div>
                         </div>
@@ -716,7 +663,7 @@
                                     <span>Проводник</span>
                                 </button>
                                 <button id="os-start-shutdown"
-                                    class="w-full text-left px-5 py-3 hover:bg-red-50 text-red-600 text-sm flex items-center space-x-4 transition-colors">
+                                    class="w-full text-left px-5 py-3 hover:bg-orange-50 text-orange-700 text-sm flex items-center space-x-4 transition-colors">
                                     <i class="fas fa-power-off w-5 text-center"></i>
                                     <span>Выключение</span>
                                 </button>
@@ -735,7 +682,7 @@
                 class="pc-sysunit w-40 h-80 bg-gray-800 rounded-xl border border-gray-600 shadow-[inset_-10px_0_40px_rgba(0,0,0,0.6),0_30px_60px_rgba(0,0,0,0.8)] flex flex-col justify-between p-4 shrink-0 relative mb-2">
                 <div
                     class="sysunit-leds h-8 w-full bg-gray-900 rounded-lg flex gap-3 items-center px-4 border-b border-gray-700 shadow-inner">
-                    <div class="w-2 h-2 bg-red-500 rounded-full opacity-30 shadow-[0_0_5px_red]" id="pc-led-hdd"></div>
+                    <div class="w-2 h-2 bg-amber-500 rounded-full opacity-30 shadow-[0_0_5px_rgba(245,158,11,0.5)]" id="pc-led-hdd"></div>
                     <div class="w-2 h-2 bg-green-500 rounded-full opacity-20 shadow-[0_0_5px_green]" id="pc-led-pwr">
                     </div>
                 </div>
@@ -755,171 +702,17 @@
                     <div class="w-full h-1 bg-black rounded-full"></div>
                     <div class="w-full h-1 bg-black rounded-full"></div>
                 </div>
-                <div
-                    class="sysunit-power h-24 bg-gray-900 rounded-lg flex flex-col items-center justify-center border-t border-gray-700">
-                    <button id="egor-pc-power-btn"
-                        class="w-14 h-14 rounded-full bg-gray-700 border border-gray-500 flex items-center justify-center transition-all focus:outline-none shadow-[0_6px_12px_rgba(0,0,0,0.6),inset_0_1px_4px_rgba(255,255,255,0.1)] active:scale-95 group hover:bg-gray-600">
-                        <i class="fas fa-power-off text-gray-500 text-2xl group-hover:text-blue-300 transition-colors"
-                            id="pc-pwr-icon"></i>
-                    </button>
-                </div>
+                <div class="h-6 bg-gray-900 rounded-lg border-t border-gray-700 shrink-0" aria-hidden="true"></div>
             </div>
         </div>
     </main>
 
     <script>
         (function () {
-            // ========== MOBILE DETECTION ==========
             const isTouchDevice = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
-
-            // ========== MOBILE ORIENTATION ==========
-            const rotateScreen = document.getElementById('mobile-rotate-screen');
-            function checkOrientation() {
-                if (!isTouchDevice) return;
-                if (window.innerHeight > window.innerWidth) {
-                    rotateScreen.classList.add('visible');
-                } else {
-                    rotateScreen.classList.remove('visible');
-                }
-            }
-            window.addEventListener('resize', checkOrientation);
-            window.addEventListener('orientationchange', checkOrientation);
-            checkOrientation();
-
-            // ========== STANDARD CURSOR LOGIC ==========
-            const sCursor = document.getElementById('standard-cursor');
-            let cursorX = 50; // Percentage
-            let cursorY = 50; // Percentage
-            let isMoving = false;
-            let lastTouchX = 0;
-            let lastTouchY = 0;
-
-            function updateCursorPosition() {
-                if (!sCursor) return;
-                sCursor.style.left = cursorX + '%';
-                sCursor.style.top = cursorY + '%';
-
-                // Hover Simulation
-                if (isPcOn && isTouchDevice) {
-                    const rect = osWorkspace.getBoundingClientRect();
-                    const absX = rect.left + (cursorX / 100) * rect.width;
-                    const absY = rect.top + (cursorY / 100) * rect.height;
-                    const el = document.elementFromPoint(absX, absY);
-
-                    document.querySelectorAll('.hover-sim').forEach(n => n.classList.remove('hover-sim'));
-                    if (el) {
-                        const target = el.closest('.egor-file-item') || (el.tagName === 'BUTTON' ? el : null) || el.closest('button');
-                        if (target) target.classList.add('hover-sim');
-                    }
-                }
-            }
-
-            if (isTouchDevice) {
-                osWorkspace.addEventListener('touchstart', (e) => {
-                    if (!isPcOn) return;
-                    isMoving = false;
-                    const rect = osWorkspace.getBoundingClientRect();
-                    
-                    // Direct positioning for first touch with slight vertical offset for visibility
-                    const offset = 30; // pixels
-                    const touchX = e.touches[0].clientX - rect.left;
-                    const touchY = e.touches[0].clientY - rect.top - offset;
-                    
-                    cursorX = (touchX / rect.width) * 100;
-                    cursorY = (touchY / rect.height) * 100;
-                    
-                    lastTouchX = e.touches[0].clientX;
-                    lastTouchY = e.touches[0].clientY;
-                    
-                    sCursor.classList.add('active');
-                    updateCursorPosition();
-                }, { passive: false });
-
-                osWorkspace.addEventListener('touchmove', (e) => {
-                    if (!isPcOn) return;
-                    e.preventDefault();
-                    isMoving = true;
-
-                    const rect = osWorkspace.getBoundingClientRect();
-                    const offset = 30; // pixels
-                    const touchX = e.touches[0].clientX - rect.left;
-                    const touchY = e.touches[0].clientY - rect.top - offset;
-
-                    cursorX = Math.max(0, Math.min(100, (touchX / rect.width) * 100));
-                    cursorY = Math.max(0, Math.min(100, (touchY / rect.height) * 100));
-
-                    updateCursorPosition();
-                }, { passive: false });
-
-                osWorkspace.addEventListener('touchend', (e) => {
-                    if (!isPcOn) return;
-                    if (!isMoving) {
-                        const rect = osWorkspace.getBoundingClientRect();
-                        const absX = rect.left + (cursorX / 100) * rect.width;
-                        const absY = rect.top + (cursorY / 100) * rect.height;
-                        const el = document.elementFromPoint(absX, absY);
-                        if (el) {
-                            playSound(audioClickObj);
-                            el.click();
-                            // Click feedback
-                            sCursor.style.transform = 'scale(0.8)';
-                            setTimeout(() => { sCursor.style.transform = ''; }, 100);
-                        }
-                    }
-                    // Optional: fade out cursor after a delay or keep it visible
-                    // For now, let's keep it visible until next touch or sleep
-                });
-            }
-
-            // ========== AUDIO CONTEXT UNLOCK ==========
             const audioUnlockOverlay = document.getElementById('audio-unlock');
             let audioContextUnlocked = false;
 
-            function unlockAudioContext() {
-                if (audioContextUnlocked) return;
-                audioContextUnlocked = true;
-                const ctx = new (window.AudioContext || window.webkitAudioContext)();
-                ctx.resume().then(() => ctx.close());
-                [audioPwr, audioNoise, audioClickObj, audioKeyObj].forEach(a => {
-                    a.play().then(() => a.pause()).catch(() => { });
-                    a.currentTime = 0;
-                });
-                if (audioUnlockOverlay) {
-                    audioUnlockOverlay.classList.add('hidden-fade');
-                    setTimeout(() => { audioUnlockOverlay.style.display = 'none'; }, 400);
-                }
-            }
-
-            if (isTouchDevice && audioUnlockOverlay) {
-                audioUnlockOverlay.style.display = 'flex';
-                audioUnlockOverlay.addEventListener('click', unlockAudioContext, { once: true });
-                audioUnlockOverlay.addEventListener('touchend', unlockAudioContext, { once: true });
-            }
-
-
-            // ========== SWIPE SUPPORT FOR GALLERY ==========
-            let touchStartX = 0;
-            let touchStartY = 0;
-            const galleryArea = document.querySelector('#os-window-gallery');
-
-            if (isTouchDevice && galleryArea) {
-                galleryArea.addEventListener('touchstart', (e) => {
-                    touchStartX = e.touches[0].clientX;
-                    touchStartY = e.touches[0].clientY;
-                }, { passive: true });
-
-                galleryArea.addEventListener('touchend', (e) => {
-                    const dx = e.changedTouches[0].clientX - touchStartX;
-                    const dy = e.changedTouches[0].clientY - touchStartY;
-                    if (Math.abs(dx) > 50 && Math.abs(dx) > Math.abs(dy)) {
-                        if (dx < 0) { galleryNext.click(); }
-                        else { galleryPrev.click(); }
-                    }
-                }, { passive: true });
-            }
-
-            // ========== ELEMENTS ==========
-            const btnPwr = document.getElementById('egor-pc-power-btn');
             const screenOff = document.getElementById('egor-pc-screen-off');
             const screenBoot = document.getElementById('egor-pc-screen-boot');
             const bootLogo = document.getElementById('egor-pc-boot-logo');
@@ -954,8 +747,11 @@
             const galleryNext = document.getElementById('gallery-next');
             const galleryImg = document.getElementById('gallery-img');
             const galleryCounter = document.getElementById('gallery-counter');
+            const vCursor = document.getElementById('virtual-cursor');
+            const screenKeyboard = document.getElementById('os-screen-keyboard');
+            const osKbdHide = document.getElementById('os-kbd-hide');
+            const mobilePowerBtn = document.getElementById('mobile-power-btn');
 
-            // ========== AUDIO ==========
             const audioPwr = new Audio('assets/sounds/computer/enable.mp3');
             audioPwr.volume = 0.5;
             const audioNoise = new Audio('assets/sounds/computer/n.mp3');
@@ -965,6 +761,130 @@
             const audioKeyObj = new Audio('assets/sounds/key.mp3');
 
             let isPcOn = false;
+
+            function unlockAudioContext() {
+                if (audioContextUnlocked) return;
+                audioContextUnlocked = true;
+                const ctx = new (window.AudioContext || window.webkitAudioContext)();
+                ctx.resume().then(() => ctx.close());
+                [audioPwr, audioNoise, audioClickObj, audioKeyObj].forEach(a => {
+                    a.play().then(() => a.pause()).catch(() => { });
+                    a.currentTime = 0;
+                });
+                if (audioUnlockOverlay) {
+                    audioUnlockOverlay.classList.add('hidden-fade');
+                    setTimeout(() => { audioUnlockOverlay.style.display = 'none'; }, 400);
+                }
+            }
+
+            if (isTouchDevice && audioUnlockOverlay) {
+                audioUnlockOverlay.style.display = 'flex';
+                audioUnlockOverlay.addEventListener('click', unlockAudioContext, { once: true });
+                audioUnlockOverlay.addEventListener('touchend', unlockAudioContext, { once: true });
+            }
+
+            function playSound(audioEl) {
+                if (!audioContextUnlocked && isTouchDevice) return;
+                const clone = audioEl.cloneNode();
+                clone.volume = audioEl.volume;
+                clone.play().catch(() => { });
+            }
+
+            let cursorX = 50;
+            let cursorY = 50;
+            let isVCursorMoving = false;
+            let lastVTouchX = 0;
+            let lastVTouchY = 0;
+
+            function updateVCursor() {
+                if (!vCursor) return;
+                vCursor.style.left = cursorX + '%';
+                vCursor.style.top = cursorY + '%';
+                if (isPcOn && isTouchDevice && osWorkspace) {
+                    const rect = osWorkspace.getBoundingClientRect();
+                    const absX = rect.left + (cursorX / 100) * rect.width;
+                    const absY = rect.top + (cursorY / 100) * rect.height;
+                    const el = document.elementFromPoint(absX, absY);
+                    document.querySelectorAll('.hover-sim').forEach(n => n.classList.remove('hover-sim'));
+                    if (el) {
+                        const target = el.closest('.egor-file-item') || (el.tagName === 'BUTTON' ? el : null) || el.closest('button');
+                        if (target) target.classList.add('hover-sim');
+                    }
+                }
+            }
+
+            function kbdConsumingTarget(t) {
+                return screenKeyboard && screenKeyboard.classList.contains('visible') && t && screenKeyboard.contains(t);
+            }
+
+            if (isTouchDevice && osWorkspace && vCursor) {
+                osWorkspace.addEventListener('touchstart', (e) => {
+                    if (!isPcOn) return;
+                    if (kbdConsumingTarget(e.target)) return;
+                    isVCursorMoving = false;
+                    lastVTouchX = e.touches[0].clientX;
+                    lastVTouchY = e.touches[0].clientY;
+                    vCursor.classList.add('active');
+                }, { passive: false });
+
+                osWorkspace.addEventListener('touchmove', (e) => {
+                    if (!isPcOn) return;
+                    if (kbdConsumingTarget(e.target)) return;
+                    e.preventDefault();
+                    isVCursorMoving = true;
+                    const dx = e.touches[0].clientX - lastVTouchX;
+                    const dy = e.touches[0].clientY - lastVTouchY;
+                    const sensitivity = 0.15;
+                    cursorX = Math.max(1, Math.min(99, cursorX + (dx * sensitivity)));
+                    cursorY = Math.max(1, Math.min(99, cursorY + (dy * sensitivity)));
+                    lastVTouchX = e.touches[0].clientX;
+                    lastVTouchY = e.touches[0].clientY;
+                    updateVCursor();
+                }, { passive: false });
+
+                osWorkspace.addEventListener('touchend', (e) => {
+                    if (!isPcOn) return;
+                    if (kbdConsumingTarget(e.target)) return;
+                    if (!isVCursorMoving) {
+                        const rect = osWorkspace.getBoundingClientRect();
+                        const absX = rect.left + (cursorX / 100) * rect.width;
+                        const absY = rect.top + (cursorY / 100) * rect.height;
+                        const el = document.elementFromPoint(absX, absY);
+                        if (el) {
+                            playSound(audioClickObj);
+                            el.click();
+                            vCursor.style.transform = 'scale(0.8)';
+                            setTimeout(() => { vCursor.style.transform = ''; }, 100);
+                        }
+                    }
+                });
+            }
+
+            if (screenKeyboard) {
+                screenKeyboard.addEventListener('touchstart', (e) => e.stopPropagation(), { passive: true });
+                screenKeyboard.addEventListener('touchmove', (e) => e.stopPropagation(), { passive: true });
+                screenKeyboard.addEventListener('mousedown', (e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                });
+            }
+
+            let touchStartX = 0;
+            let touchStartY = 0;
+            if (isTouchDevice && winGallery) {
+                winGallery.addEventListener('touchstart', (e) => {
+                    touchStartX = e.touches[0].clientX;
+                    touchStartY = e.touches[0].clientY;
+                }, { passive: true });
+                winGallery.addEventListener('touchend', (e) => {
+                    const dx = e.changedTouches[0].clientX - touchStartX;
+                    const dy = e.changedTouches[0].clientY - touchStartY;
+                    if (Math.abs(dx) > 50 && Math.abs(dx) > Math.abs(dy)) {
+                        if (dx < 0) { galleryNext.click(); }
+                        else { galleryPrev.click(); }
+                    }
+                }, { passive: true });
+            }
             let hddInterval;
             let clockInterval;
             let currentPath = [];
@@ -1043,14 +963,6 @@
                     }
                 ]
             };
-
-            // ========== HELPERS ==========
-            function playSound(audioEl) {
-                if (!audioContextUnlocked && isTouchDevice) return;
-                const clone = audioEl.cloneNode();
-                clone.volume = audioEl.volume;
-                clone.play().catch(e => { });
-            }
 
             function updateClock() {
                 if (!isPcOn) return;
@@ -1156,12 +1068,13 @@
                 winPassword.classList.add('flex');
                 setTimeout(() => pwdInput.focus(), 100);
             }
-            pwdClose.onclick = () => { playSound(audioClickObj); winPassword.classList.add('hidden'); winPassword.classList.remove('flex'); };
+            pwdClose.onclick = () => { playSound(audioClickObj); hideSoftKeyboard(); winPassword.classList.add('hidden'); winPassword.classList.remove('flex'); };
             pwdInput.oninput = () => playSound(audioKeyObj);
             pwdInput.onkeypress = (e) => { if (e.key === 'Enter') checkPassword(); };
             pwdSubmit.onclick = () => { playSound(audioClickObj); checkPassword(); };
             function checkPassword() {
                 if (pwdInput.value === currentLockedFolder.pwd) {
+                    hideSoftKeyboard();
                     winPassword.classList.add('hidden');
                     winPassword.classList.remove('flex');
                     winExplorer.classList.add('hidden');
@@ -1169,6 +1082,55 @@
                 } else {
                     pwdError.classList.remove('hidden');
                 }
+            }
+
+            function showSoftKeyboard() {
+                if (!isTouchDevice || !screenKeyboard) return;
+                screenKeyboard.classList.add('visible');
+                screenKeyboard.setAttribute('aria-hidden', 'false');
+            }
+
+            function hideSoftKeyboard() {
+                if (!screenKeyboard) return;
+                screenKeyboard.classList.remove('visible');
+                screenKeyboard.setAttribute('aria-hidden', 'true');
+            }
+
+            if (isTouchDevice && pwdInput) {
+                pwdInput.setAttribute('readonly', 'readonly');
+                pwdInput.addEventListener('focus', () => showSoftKeyboard());
+                pwdInput.addEventListener('blur', () => {
+                    setTimeout(() => {
+                        const a = document.activeElement;
+                        if (a !== pwdInput && (!screenKeyboard || !screenKeyboard.contains(a))) {
+                            hideSoftKeyboard();
+                        }
+                    }, 180);
+                });
+            }
+
+            if (screenKeyboard) {
+                screenKeyboard.querySelectorAll('[data-os-kbd]').forEach(btn => {
+                    btn.addEventListener('click', () => {
+                        const k = btn.getAttribute('data-os-kbd');
+                        if (k === 'back') {
+                            pwdInput.value = pwdInput.value.slice(0, -1);
+                        } else if (k === 'enter') {
+                            playSound(audioClickObj);
+                            checkPassword();
+                            return;
+                        } else if (/^\d$/.test(k)) {
+                            pwdInput.value += k;
+                        }
+                        pwdInput.dispatchEvent(new Event('input', { bubbles: true }));
+                    });
+                });
+            }
+            if (osKbdHide) {
+                osKbdHide.addEventListener('click', () => {
+                    hideSoftKeyboard();
+                    pwdInput.blur();
+                });
             }
 
             // ========== GALLERY ==========
@@ -1194,10 +1156,11 @@
                 playSound(audioClickObj);
                 if (!audioContextUnlocked && isTouchDevice) unlockAudioContext();
 
-                    if (isPcOn) {
-                        isPcOn = false;
-                        if (sCursor) sCursor.classList.remove('active');
-                        screenOff.classList.remove('hidden');
+                if (isPcOn) {
+                    isPcOn = false;
+                    hideSoftKeyboard();
+                    if (vCursor) vCursor.classList.remove('active');
+                    screenOff.classList.remove('hidden');
                     screenBoot.classList.add('hidden');
                     screenOs.classList.add('hidden');
                     screenOs.style.display = '';
@@ -1207,8 +1170,10 @@
                     winGallery.classList.add('hidden');
                     winPassword.classList.remove('flex');
                     winGallery.classList.remove('flex');
-                    pwrIcon.classList.remove('text-blue-400');
-                    pwrIcon.classList.add('text-gray-500');
+                    if (pwrIcon) {
+                        pwrIcon.classList.remove('text-blue-400');
+                        pwrIcon.classList.add('text-gray-500');
+                    }
                     ledPwr.classList.remove('opacity-100', 'shadow-[0_0_8px_#22c55e]');
                     ledPwr.classList.add('opacity-20');
                     clearInterval(hddInterval);
@@ -1218,13 +1183,13 @@
                     audioNoise.pause();
                     audioNoise.currentTime = 0;
                     audioPwr.pause();
-                    
-                    const mpb = document.getElementById('mobile-power-btn');
-                    if (mpb) mpb.classList.remove('on');
+                    if (mobilePowerBtn) mobilePowerBtn.classList.remove('on');
                 } else {
                     isPcOn = true;
-                    pwrIcon.classList.remove('text-gray-500');
-                    pwrIcon.classList.add('text-blue-400');
+                    if (pwrIcon) {
+                        pwrIcon.classList.remove('text-gray-500');
+                        pwrIcon.classList.add('text-blue-400');
+                    }
                     ledPwr.classList.remove('opacity-20');
                     ledPwr.classList.add('opacity-100', 'shadow-[0_0_8px_#22c55e]');
                     screenOff.classList.add('hidden');
@@ -1237,7 +1202,7 @@
                         bootLogo.classList.add('opacity-100');
                     }, 50);
                     audioPwr.currentTime = 0;
-                    audioPwr.play().catch(e => { });
+                    audioPwr.play().catch(() => { });
                     audioPwr.onended = () => {
                         if (!isPcOn) return;
                         bootLogo.classList.remove('opacity-100');
@@ -1250,23 +1215,18 @@
                             populateDesktop();
                             updateClock();
                             clockInterval = setInterval(updateClock, 30000);
-                            audioNoise.play().catch(e => { });
-                            
-                            if (isTouchDevice && sCursor) {
-                                sCursor.classList.add('active');
+                            audioNoise.play().catch(() => { });
+                            if (isTouchDevice && vCursor) {
+                                vCursor.classList.add('active');
                                 cursorX = 50; cursorY = 50;
-                                updateCursorPosition();
+                                updateVCursor();
                             }
                         }, 200);
                     };
-                    const mpb = document.getElementById('mobile-power-btn');
-                    if (mpb) mpb.classList.add('on');
+                    if (mobilePowerBtn) mobilePowerBtn.classList.add('on');
                 }
             }
 
-            btnPwr.onclick = doPowerToggle;
-
-            const mobilePowerBtn = document.getElementById('mobile-power-btn');
             if (mobilePowerBtn) {
                 mobilePowerBtn.addEventListener('click', (e) => {
                     e.stopPropagation();
