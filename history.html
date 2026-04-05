@@ -941,7 +941,7 @@
                             <div class="inline-block px-3 py-1 rounded-full bg-yellow-500/10 border border-yellow-500/20 text-yellow-400 text-xs font-semibold uppercase tracking-widest mb-5">Архив</div>
                             <h4 class="font-bold text-white text-3xl md:text-5xl mb-5 tracking-tight">Файлы Егора</h4>
                             <p class="text-gray-400 text-base md:text-lg mb-10 max-w-md leading-relaxed">Компьютер с сборником скриншотов, видео, фото и прочего про владельца и создателя Ля Короны.</p>
-                            <a href="pc.html" class="pc-hero-btn">
+                            <a href="pc.html" id="pc-launch-btn" class="pc-hero-btn">
                                 <i class="fas fa-power-off text-sm"></i>
                                 <span>Запустить</span>
                             </a>
@@ -1346,6 +1346,24 @@
 
 
 
+        // ==========================================
+        // ЛОГИКА ЗАПУСКА ПК (PC vs MOBILE)
+        // ==========================================
+        const pcLaunchBtn = document.getElementById('pc-launch-btn');
+        if (pcLaunchBtn) {
+            pcLaunchBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                // Простая проверка на мобильное устройство
+                const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) || 
+                                 (window.innerWidth <= 1024 && ('ontouchstart' in window || navigator.maxTouchPoints > 0));
+                
+                if (isMobile) {
+                    window.location.href = 'pc_m.html';
+                } else {
+                    window.location.href = 'pc.html';
+                }
+            });
+        }
     </script>
 </body>
 </html>
