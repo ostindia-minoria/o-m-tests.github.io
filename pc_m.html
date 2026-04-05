@@ -156,7 +156,16 @@
             }
         }
 
-        /* Виртуальный курсор (логика как в pc.html) */
+        /* Вся область «экрана» ОС — одна зона для курсора (рабочий стол + панель задач + меню) */
+        #egor-pc-screen-os {
+            position: relative;
+        }
+
+        #egor-pc-screen-os.touch-cursor-capture {
+            touch-action: none;
+        }
+
+        /* Виртуальный курсор: координаты в % от полного экрана монитора */
         #virtual-cursor {
             position: absolute;
             width: 24px;
@@ -260,6 +269,115 @@
             }
         }
 
+        /* Экран «поверните устройство» (только портрет на touch) */
+        #mobile-rotate-screen {
+            position: fixed;
+            inset: 0;
+            z-index: 10000;
+            background: radial-gradient(circle at center, #111827 0%, #030712 100%);
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 2rem;
+            color: white;
+            text-align: center;
+            padding: 2rem;
+            padding-bottom: max(2rem, env(safe-area-inset-bottom));
+            backdrop-filter: blur(20px);
+        }
+
+        #mobile-rotate-screen.visible {
+            display: flex;
+        }
+
+        .rotate-icon-container {
+            position: relative;
+            width: 120px;
+            height: 120px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .rotate-phone-icon {
+            width: 50px;
+            height: 90px;
+            border: 3px solid #6366f1;
+            border-radius: 12px;
+            background: rgba(99, 102, 241, 0.1);
+            position: relative;
+            animation: rotateDevice 3s cubic-bezier(0.65, 0, 0.35, 1) infinite;
+            box-shadow: 0 0 30px rgba(99, 102, 241, 0.3);
+        }
+
+        .rotate-phone-icon::after {
+            content: '';
+            position: absolute;
+            bottom: 8px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: #6366f1;
+        }
+
+        @keyframes rotateDevice {
+            0% {
+                transform: rotate(0deg);
+                opacity: 0.5;
+            }
+
+            25%,
+            75% {
+                transform: rotate(-90deg);
+                opacity: 1;
+            }
+
+            100% {
+                transform: rotate(0deg);
+                opacity: 0.5;
+            }
+        }
+
+        .rotate-ring {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            border: 2px dashed rgba(99, 102, 241, 0.2);
+            border-radius: 50%;
+            animation: spinRing 10s linear infinite;
+        }
+
+        @keyframes spinRing {
+            from {
+                transform: rotate(0deg);
+            }
+
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        .rotate-title {
+            font-size: 1.5rem;
+            font-weight: 800;
+            background: linear-gradient(to right, #fff, #94a3b8);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 0.5rem;
+        }
+
+        .rotate-subtitle {
+            font-size: 1rem;
+            color: #94a3b8;
+            max-width: 300px;
+            line-height: 1.6;
+            font-weight: 400;
+        }
+
         /* Плавающая кнопка питания */
         #mobile-power-btn {
             display: flex;
@@ -337,11 +455,15 @@
                 flex-wrap: nowrap !important;
             }
 
-            /* Ширина монитора: помещается по высоте экрана (16:9) и оставляет место корпусу */
+            /* Монитор + подставка целиком помещаются под шапку и отступы (запас по высоте) */
             #egor-pc-monitor-wrap {
                 flex: 1 1 auto !important;
                 min-width: 0 !important;
-                width: min(calc(100vw - 6.25rem), calc((100dvh - 5.5rem) * 16 / 9), calc((100vh - 5.5rem) * 16 / 9)) !important;
+                width: min(
+                    calc(100vw - 6.75rem),
+                    calc((100dvh - 9.5rem) * 16 / 9),
+                    calc((100vh - 9.5rem) * 16 / 9)
+                ) !important;
                 max-width: none !important;
             }
 
@@ -358,12 +480,12 @@
             }
 
             .pc-sysunit {
-                width: clamp(3.25rem, 14vw, 5.25rem) !important;
-                height: clamp(9rem, 34vh, 14rem) !important;
-                height: clamp(9rem, 34dvh, 14rem) !important;
+                width: clamp(3rem, 12vw, 4.85rem) !important;
+                height: clamp(8.5rem, min(32dvh, 32vh), 13rem) !important;
                 flex-shrink: 0 !important;
+                align-self: flex-end !important;
                 margin-bottom: 0.08rem !important;
-                padding: 0.5rem !important;
+                padding: 0.45rem !important;
             }
 
             .pc-sysunit .sysunit-bays {
@@ -390,8 +512,13 @@
             }
 
             #egor-pc-monitor-wrap {
-                width: min(calc(100vw - 5.5rem), calc((100dvh - 4.5rem) * 16 / 9), calc((100vh - 4.5rem) * 16 / 9)) !important;
+                width: min(
+                    calc(100vw - 6rem),
+                    calc((100dvh - 8rem) * 16 / 9),
+                    calc((100vh - 8rem) * 16 / 9)
+                ) !important;
             }
+
         }
     </style>
 </head>
@@ -404,6 +531,16 @@
         <div class="video-overlay"></div>
     </div>
 
+    <div id="mobile-rotate-screen">
+        <div class="rotate-icon-container">
+            <div class="rotate-ring"></div>
+            <div class="rotate-phone-icon"></div>
+        </div>
+        <div class="text-center">
+            <h2 class="rotate-title">Поверните устройство</h2>
+            <p class="rotate-subtitle">Для OCEAN OS нужна альбомная ориентация экрана</p>
+        </div>
+    </div>
 
     <!-- Кнопка питания -->
     <div id="mobile-power-btn">
@@ -461,12 +598,6 @@
                         <!-- Рабочая область ОС -->
                         <div class="relative flex-1 w-full text-sm text-gray-200 select-none overflow-hidden text-left"
                             id="os-workspace">
-
-                            <div id="virtual-cursor">
-                                <svg class="cursor-pointer-svg" viewBox="0 0 24 24">
-                                    <path d="M7 2l12 11.2-5.8.8 3.3 6-2.5 1.4-3.4-6.1L7 19z" />
-                                </svg>
-                            </div>
 
                             <!-- Иконки рабочего стола -->
                             <div id="os-desktop-icons"
@@ -609,6 +740,12 @@
                                 </button>
                             </div>
                         </div>
+
+                        <div id="virtual-cursor" aria-hidden="true">
+                            <svg class="cursor-pointer-svg" viewBox="0 0 24 24">
+                                <path d="M7 2l12 11.2-5.8.8 3.3 6-2.5 1.4-3.4-6.1L7 19z" />
+                            </svg>
+                        </div>
                     </div>
                 </div>
                 <!-- Подставка -->
@@ -650,8 +787,21 @@
     <script>
         (function () {
             const isTouchDevice = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
+            const rotateScreen = document.getElementById('mobile-rotate-screen');
             const audioUnlockOverlay = document.getElementById('audio-unlock');
             let audioContextUnlocked = false;
+
+            function checkOrientation() {
+                if (!isTouchDevice || !rotateScreen) return;
+                if (window.innerHeight > window.innerWidth) {
+                    rotateScreen.classList.add('visible');
+                } else {
+                    rotateScreen.classList.remove('visible');
+                }
+            }
+            window.addEventListener('resize', checkOrientation);
+            window.addEventListener('orientationchange', checkOrientation);
+            checkOrientation();
 
             const screenOff = document.getElementById('egor-pc-screen-off');
             const screenBoot = document.getElementById('egor-pc-screen-boot');
@@ -734,68 +884,87 @@
             let lastVTouchX = 0;
             let lastVTouchY = 0;
 
+            function pickHoverTarget(el) {
+                if (!el) return null;
+                const t = el.closest('.egor-file-item, button, a, [role="button"], label, .cursor-pointer');
+                if (t) return t;
+                if (el.closest('#os-taskbar')) {
+                    return el.closest('button, a, .cursor-pointer');
+                }
+                if (el.closest('#os-start-menu')) {
+                    return el.closest('button, a');
+                }
+                return null;
+            }
+
             function updateVCursor() {
-                if (!vCursor) return;
+                if (!vCursor || !screenOs) return;
                 vCursor.style.left = cursorX + '%';
                 vCursor.style.top = cursorY + '%';
-                if (isPcOn && isTouchDevice && osWorkspace) {
-                    const rect = osWorkspace.getBoundingClientRect();
+                if (isPcOn && isTouchDevice) {
+                    const rect = screenOs.getBoundingClientRect();
                     const absX = rect.left + (cursorX / 100) * rect.width;
                     const absY = rect.top + (cursorY / 100) * rect.height;
                     const el = document.elementFromPoint(absX, absY);
                     document.querySelectorAll('.hover-sim').forEach(n => n.classList.remove('hover-sim'));
-                    if (el) {
-                        const target = el.closest('.egor-file-item') || (el.tagName === 'BUTTON' ? el : null) || el.closest('button');
-                        if (target) target.classList.add('hover-sim');
-                    }
+                    const target = pickHoverTarget(el);
+                    if (target) target.classList.add('hover-sim');
                 }
             }
 
-            function shouldIgnoreVirtualCursorTouch(t) {
-                return t && t.closest && t.closest('#os-window-password');
+            function shouldIgnoreVirtualCursorTouch(node) {
+                return node && node.closest && node.closest('#os-window-password');
             }
 
-            if (isTouchDevice && osWorkspace && vCursor) {
-                osWorkspace.addEventListener('touchstart', (e) => {
+            const cursorTouchOpts = { passive: false, capture: true };
+
+            if (isTouchDevice && screenOs && vCursor) {
+                screenOs.addEventListener('touchstart', (e) => {
                     if (!isPcOn) return;
                     if (shouldIgnoreVirtualCursorTouch(e.target)) return;
                     isVCursorMoving = false;
                     lastVTouchX = e.touches[0].clientX;
                     lastVTouchY = e.touches[0].clientY;
                     vCursor.classList.add('active');
-                }, { passive: false });
+                }, cursorTouchOpts);
 
-                osWorkspace.addEventListener('touchmove', (e) => {
+                screenOs.addEventListener('touchmove', (e) => {
                     if (!isPcOn) return;
+                    const finger = e.touches[0];
+                    if (finger && shouldIgnoreVirtualCursorTouch(document.elementFromPoint(finger.clientX, finger.clientY))) {
+                        return;
+                    }
                     if (shouldIgnoreVirtualCursorTouch(e.target)) return;
                     e.preventDefault();
                     isVCursorMoving = true;
                     const dx = e.touches[0].clientX - lastVTouchX;
                     const dy = e.touches[0].clientY - lastVTouchY;
-                    const sensitivity = 0.42;
-                    cursorX = Math.max(1, Math.min(99, cursorX + (dx * sensitivity)));
-                    cursorY = Math.max(1, Math.min(99, cursorY + (dy * sensitivity)));
+                    const sensitivity = 0.5;
+                    cursorX = Math.max(0.5, Math.min(99.5, cursorX + (dx * sensitivity)));
+                    cursorY = Math.max(0.5, Math.min(99.5, cursorY + (dy * sensitivity)));
                     lastVTouchX = e.touches[0].clientX;
                     lastVTouchY = e.touches[0].clientY;
                     updateVCursor();
-                }, { passive: false });
+                }, cursorTouchOpts);
 
-                osWorkspace.addEventListener('touchend', (e) => {
+                screenOs.addEventListener('touchend', (e) => {
                     if (!isPcOn) return;
-                    if (shouldIgnoreVirtualCursorTouch(e.target)) return;
+                    const t = e.changedTouches[0];
+                    const nodeAt = t ? document.elementFromPoint(t.clientX, t.clientY) : null;
+                    if (shouldIgnoreVirtualCursorTouch(nodeAt) || shouldIgnoreVirtualCursorTouch(e.target)) return;
                     if (!isVCursorMoving) {
-                        const rect = osWorkspace.getBoundingClientRect();
+                        const rect = screenOs.getBoundingClientRect();
                         const absX = rect.left + (cursorX / 100) * rect.width;
                         const absY = rect.top + (cursorY / 100) * rect.height;
                         const el = document.elementFromPoint(absX, absY);
-                        if (el) {
+                        if (el && !shouldIgnoreVirtualCursorTouch(el)) {
                             playSound(audioClickObj);
                             el.click();
                             vCursor.style.transform = 'scale(0.8)';
                             setTimeout(() => { vCursor.style.transform = ''; }, 100);
                         }
                     }
-                });
+                }, cursorTouchOpts);
             }
 
             let touchStartX = 0;
@@ -1042,6 +1211,7 @@
                     screenBoot.classList.add('hidden');
                     screenOs.classList.add('hidden');
                     screenOs.style.display = '';
+                    screenOs.classList.remove('touch-cursor-capture');
                     winExplorer.classList.add('hidden');
                     winPassword.classList.add('hidden');
                     winNotepad.classList.add('hidden');
@@ -1090,6 +1260,7 @@
                             screenBoot.classList.add('hidden');
                             screenOs.classList.remove('hidden');
                             screenOs.style.display = 'flex';
+                            if (isTouchDevice) screenOs.classList.add('touch-cursor-capture');
                             populateDesktop();
                             updateClock();
                             clockInterval = setInterval(updateClock, 30000);
