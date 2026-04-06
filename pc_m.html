@@ -428,7 +428,35 @@
             box-shadow: 0 0 25px rgba(59, 130, 246, 0.3);
         }
 
-        /* Смартфон: горизонтально как pc.html, крупно, но с полями вокруг */
+        #mobile-home-btn {
+            position: fixed;
+            right: 1rem;
+            bottom: 1rem;
+            z-index: 220;
+            height: 2.15rem;
+            padding: 0 0.85rem;
+            border-radius: 999px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            background: rgba(15, 23, 42, 0.85);
+            color: #e2e8f0;
+            font-size: 0.72rem;
+            font-weight: 600;
+            letter-spacing: 0.02em;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            box-shadow: 0 10px 28px rgba(0, 0, 0, 0.45);
+            transition: transform 0.2s ease, background 0.2s ease;
+        }
+
+        #mobile-home-btn:active {
+            transform: scale(0.96);
+            background: rgba(30, 41, 59, 0.9);
+        }
+
+        /* Смартфон: fullscreen-режим (референс: крупные элементы и ярлыки) */
         @media (hover: none) and (pointer: coarse) {
             body {
                 overflow: hidden !important;
@@ -438,117 +466,125 @@
                 min-height: 100dvh !important;
             }
 
-            header .header-content {
-                height: 52px !important;
-                padding-left: 0.75rem !important;
-                padding-right: 0.75rem !important;
-            }
-
-            .logo-text {
-                font-size: 0.9rem !important;
-                letter-spacing: 0.4px !important;
-            }
-
-            header nav {
-                gap: 0.5rem !important;
-                font-size: 0.75rem !important;
-            }
-
-            header .container {
-                max-width: 100% !important;
-                padding-left: 0.5rem !important;
-                padding-right: 0.5rem !important;
+            header {
+                display: none !important;
             }
 
             .pc-workspace {
-                padding: 0.4rem 0.5rem 0.6rem !important;
+                padding: 0 !important;
                 overflow: hidden !important;
                 display: flex !important;
-                align-items: flex-end !important;
+                align-items: stretch !important;
                 justify-content: center !important;
                 min-height: 0 !important;
                 flex: 1 1 auto !important;
+                height: 100dvh !important;
             }
 
             .pc-main-layout {
                 flex-direction: row !important;
-                align-items: flex-end !important;
-                justify-content: center !important;
-                gap: clamp(0.35rem, 2.2vw, 1rem) !important;
+                align-items: stretch !important;
+                justify-content: stretch !important;
+                gap: 0 !important;
                 width: 100% !important;
                 max-width: 100% !important;
                 flex-wrap: nowrap !important;
-                overflow-x: hidden !important;
+                overflow: hidden !important;
                 box-sizing: border-box !important;
+                height: 100% !important;
             }
 
-            /*
-             * Монитор не должен расти за счёт flex-grow (иначе вылезает за край).
-             * Ширина рамки — min(оставшееся место в ряду, лимит по высоте 16:9).
-             */
             #egor-pc-monitor-wrap {
-                flex: 1 1 0% !important;
-                min-width: 0 !important;
-                max-width: calc(100% - 4.75rem) !important;
-                width: auto !important;
+                flex: 1 1 100% !important;
+                min-width: 100% !important;
+                max-width: 100% !important;
+                width: 100% !important;
+                height: 100% !important;
+                justify-content: center !important;
             }
 
             #egor-pc-monitor-wrap>div.pc-monitor-bezel:first-child {
-                border-width: 5px !important;
-                width: min(100%, 88vw, calc((100vh - 9rem) * 16 / 9)) !important;
-                width: min(100%, 88vw, calc((min(100vh, 100dvh) - 9rem) * 16 / 9)) !important;
-                max-width: 100% !important;
-                aspect-ratio: 16 / 9 !important;
-                height: auto !important;
-                max-height: calc(100vh - 8.75rem) !important;
-                max-height: calc(100dvh - 8.75rem) !important;
+                border-width: 0 !important;
+                border-radius: 0 !important;
+                width: 100% !important;
+                height: 100% !important;
+                max-width: none !important;
+                max-height: none !important;
+                aspect-ratio: auto !important;
             }
 
             #egor-pc-monitor-wrap .monitor-stand-neck {
-                width: min(5.5rem, 18vw) !important;
+                display: none !important;
             }
 
             #egor-pc-monitor-wrap .monitor-stand-base {
-                width: min(8rem, 26vw) !important;
+                display: none !important;
             }
 
             .pc-sysunit {
-                width: clamp(3rem, 11vw, 4.5rem) !important;
-                height: clamp(8rem, min(30dvh, 30vh), 12.5rem) !important;
-                flex-shrink: 0 !important;
-                align-self: flex-end !important;
-                margin-bottom: 0.08rem !important;
-                padding: 0.45rem !important;
+                display: none !important;
             }
 
-            .pc-sysunit .sysunit-bays {
-                margin-top: 0.35rem !important;
+            #egor-pc-screen-os {
+                background-size: cover !important;
+                background-position: center !important;
             }
 
-            .pc-sysunit .sysunit-bays > div {
-                height: 1.35rem !important;
+            #os-desktop-icons {
+                padding: 0.9rem !important;
+                gap: 0.9rem !important;
+                align-content: flex-start !important;
             }
 
-            .pc-sysunit .sysunit-vents {
-                margin-top: 0.35rem !important;
-                margin-bottom: 0.35rem !important;
+            #os-desktop-icons .desktop-shortcut {
+                width: 4.9rem !important;
+                min-height: 4.9rem !important;
+            }
+
+            #os-desktop-icons .desktop-shortcut i {
+                font-size: 2.05rem !important;
+                margin-bottom: 0.38rem !important;
+            }
+
+            #os-desktop-icons .desktop-shortcut span {
+                font-size: 0.67rem !important;
+                line-height: 1.1 !important;
+            }
+
+            #os-taskbar {
+                height: 2.75rem !important;
+                padding-left: 0.75rem !important;
+                padding-right: 0.75rem !important;
+            }
+
+            #mobile-power-btn {
+                bottom: 1rem !important;
+                right: 4.85rem !important;
+                width: 3rem !important;
+                height: 3rem !important;
+                border-width: 2px !important;
+                background: radial-gradient(circle at 35% 30%, #3b82f6, #1d4ed8 70%) !important;
+                color: #bfdbfe !important;
+                border-color: rgba(59, 130, 246, 0.75) !important;
+                box-shadow: 0 0 20px rgba(37, 99, 235, 0.45), 0 10px 30px rgba(0, 0, 0, 0.45) !important;
+            }
+
+            #pc-pwr-icon {
+                color: #dbeafe !important;
             }
         }
 
         @media (hover: none) and (pointer: coarse) and (max-height: 520px) {
-            header .header-content {
-                height: 42px !important;
+            #mobile-power-btn {
+                width: 2.65rem !important;
+                height: 2.65rem !important;
+                right: 4.35rem !important;
             }
 
-            .pc-workspace {
-                padding: 0.25rem 0.4rem !important;
-            }
-
-            #egor-pc-monitor-wrap>div.pc-monitor-bezel:first-child {
-                width: min(100%, 85vw, calc((100vh - 7.5rem) * 16 / 9)) !important;
-                width: min(100%, 85vw, calc((min(100vh, 100dvh) - 7.5rem) * 16 / 9)) !important;
-                max-height: calc(100vh - 7.25rem) !important;
-                max-height: calc(100dvh - 7.25rem) !important;
+            #mobile-home-btn {
+                height: 1.95rem !important;
+                padding: 0 0.7rem !important;
+                font-size: 0.66rem !important;
             }
         }
     </style>
@@ -577,6 +613,10 @@
     <div id="mobile-power-btn">
         <i class="fas fa-power-off text-gray-500 transition-colors" id="pc-pwr-icon"></i>
     </div>
+    <button id="mobile-home-btn" type="button" aria-label="Вернуться на главную">
+        <i class="fas fa-house"></i>
+        <span>Главная</span>
+    </button>
 
     <!-- Audio unlock overlay for mobile -->
     <div id="audio-unlock" class="audio-unlock-overlay" style="display:none;">
@@ -1153,7 +1193,7 @@
                 const dFiles = osFiles.children.find(c => c.id === 'Desktop').children;
                 dFiles.forEach(item => {
                     const el = document.createElement('div');
-                    el.className = 'cursor-pointer hover:bg-white/10 p-2 rounded transition-colors group flex flex-col items-center';
+                    el.className = 'desktop-shortcut cursor-pointer hover:bg-white/10 p-2 rounded transition-colors group flex flex-col items-center';
                     el.style.width = '6rem';
                     if (item.id === 'sys_trash') {
                         el.classList.add('absolute');
@@ -1335,6 +1375,12 @@
                 mobilePowerBtn.addEventListener('click', (e) => {
                     e.stopPropagation();
                     doPowerToggle();
+                });
+            }
+            const mobileHomeBtn = document.getElementById('mobile-home-btn');
+            if (mobileHomeBtn) {
+                mobileHomeBtn.addEventListener('click', () => {
+                    window.location.href = 'index.html';
                 });
             }
         })();
