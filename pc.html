@@ -20,16 +20,30 @@
             box-sizing: border-box;
         }
 
-        body {
+        html, body {
             font-family: 'Inter', sans-serif;
             background-color: #030712;
             color: #e2e8f0;
             margin: 0;
             padding: 0;
             height: 100vh;
+            width: 100vw;
             display: flex;
             flex-direction: column;
             overflow: hidden;
+        }
+
+        /* Fullscreen styles */
+        :fullscreen {
+            background-color: #030712;
+        }
+
+        :-webkit-full-screen {
+            background-color: #030712;
+        }
+
+        :-moz-full-screen {
+            background-color: #030712;
         }
 
         /* Video Background */
@@ -60,7 +74,7 @@
             z-index: -1;
         }
 
-        /* Header */
+        /* Header - hidden in fullscreen desktop mode */
         header {
             background-color: rgba(17, 24, 39, 0.85);
             backdrop-filter: blur(12px);
@@ -159,24 +173,38 @@
             animation: pulse-glow 4s infinite alternate;
         }
 
-        /* Full page tweaks for monitor size */
+        /* Monitor wrap */
         #egor-pc-monitor-wrap {
-            transform: scale(1.1);
+            transform: none;
         }
 
-        @media (max-width: 1024px) {
-            #egor-pc-monitor-wrap {
-                transform: scale(1);
-            }
-        }
-
-        /* Ensure all interactive elements are tap-friendly */
         button,
-        a,
         .egor-file-item {
             touch-action: manipulation;
             -webkit-tap-highlight-color: transparent;
         }
+
+        header a,
+        .logo-text {
+            touch-action: manipulation;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        #os-window-notepad:not(.hidden) {
+            display: flex;
+            flex-direction: column;
+            min-height: 0;
+        }
+
+        #os-notepad-content {
+            flex: 1 1 0%;
+            min-height: 0;
+            overflow-y: scroll;
+            -webkit-overflow-scrolling: touch;
+            overscroll-behavior: contain;
+            touch-action: pan-y;
+        }
+
         .audio-unlock-overlay {
             position: fixed;
             inset: 0;
@@ -222,14 +250,6 @@
                 box-shadow: 0 0 40px rgba(168, 85, 247, 0.4);
                 transform: scale(1.05);
             }
-        }
-
-        /* Ensure all interactive elements are tap-friendly */
-        button,
-        a,
-        .egor-file-item {
-            touch-action: manipulation;
-            -webkit-tap-highlight-color: transparent;
         }
 
         /* ====== MOBILE ROTATION SCREEN ====== */
@@ -384,17 +404,147 @@
             box-shadow: 0 0 20px rgba(59, 130, 246, 0.3);
         }
 
-        /* ====== MOBILE ADAPTATION — 100% PARITY ====== */
+        /* Desktop icons: icon-only, no labels, compact rounded tiles */
+        #os-desktop-icons {
+            display: grid !important;
+            grid-template-columns: repeat(2, auto);
+            gap: 0.75rem;
+            padding: 1rem 1.2rem !important;
+            justify-content: start;
+            align-content: start;
+        }
+
+        .desktop-shortcut {
+            width: 3.6rem;
+            height: 3.6rem;
+            border-radius: 0.85rem;
+            background: rgba(15, 23, 42, 0.72);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            box-shadow: 0 6px 18px rgba(0, 0, 0, 0.35);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .desktop-shortcut:hover {
+            background: rgba(15, 23, 42, 0.9);
+            transform: scale(1.06);
+        }
+
+        .desktop-shortcut:active {
+            transform: scale(0.95);
+        }
+
+        .desktop-shortcut i {
+            font-size: 1.55rem;
+            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.4));
+        }
+
+        /* Monitor screen buttons - matching photo reference */
+        .monitor-screen-btn {
+            position: absolute;
+            z-index: 60;
+            border: none;
+            padding: 0;
+            touch-action: manipulation;
+            -webkit-tap-highlight-color: transparent;
+            cursor: pointer;
+            transition: transform 0.2s ease;
+        }
+
+        .monitor-screen-btn:active {
+            transform: scale(0.94);
+        }
+
+        /* Close button - top right */
+        .monitor-close-btn {
+            top: 0.35rem;
+            right: 0.35rem;
+            width: 34px;
+            height: 34px;
+            border-radius: 7px;
+            background: #000;
+            box-shadow: 0 4px 14px rgba(0, 0, 0, 0.65);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .monitor-close-btn__x {
+            position: relative;
+            width: 42%;
+            height: 42%;
+            display: block;
+        }
+
+        .monitor-close-btn__x::before,
+        .monitor-close-btn__x::after {
+            content: '';
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            width: 132%;
+            height: 3px;
+            background: #fff;
+            border-radius: 2px;
+            transform-origin: center;
+        }
+
+        .monitor-close-btn__x::before {
+            transform: translate(-50%, -50%) rotate(45deg);
+        }
+
+        .monitor-close-btn__x::after {
+            transform: translate(-50%, -50%) rotate(-45deg);
+        }
+
+        /* Power button - bottom right, orange gradient */
+        .monitor-power-btn {
+            bottom: 0.55rem;
+            right: 0.55rem;
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            background: linear-gradient(180deg, #ffb347 0%, #ff8c00 42%, #c2410c 100%);
+            box-shadow:
+                inset 0 2px 6px rgba(255, 255, 255, 0.35),
+                inset 0 -3px 10px rgba(0, 0, 0, 0.35),
+                0 8px 22px rgba(0, 0, 0, 0.55);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .monitor-power-btn--on {
+            box-shadow:
+                inset 0 2px 6px rgba(255, 255, 255, 0.45),
+                inset 0 -3px 10px rgba(0, 0, 0, 0.25),
+                0 0 0 2px rgba(255, 255, 255, 0.35),
+                0 10px 26px rgba(234, 88, 12, 0.45);
+        }
+
+        .monitor-power-btn__icon {
+            width: 52%;
+            height: 52%;
+            display: block;
+            fill: none;
+            stroke: #fff;
+            stroke-width: 2;
+            stroke-linecap: round;
+        }
+
+        /* ====== MOBILE ADAPTATION ====== */
         @media (hover: none) and (pointer: coarse) {
-            
-            /* Enable body scrolling and proper height */
             body {
                 overflow: auto !important;
                 height: auto !important;
                 min-height: 100vh !important;
             }
 
-            /* Workspace — center content and preserve layout */
             .pc-workspace {
                 padding: 1rem !important;
                 overflow: visible !important;
@@ -405,72 +555,79 @@
                 flex: none !important;
             }
 
-            .pc-main-layout {
-                flex-direction: column !important;
-                max-width: none !important;
-                gap: 2rem !important;
-                align-items: center !important;
-                width: auto !important;
-            }
-
-            /* Hide the power button on the sysunit for mobile as requested */
-            .sysunit-power {
-                display: none !important;
-            }
-
-            /* Display floating power button */
             #mobile-power-btn {
                 display: flex !important;
             }
 
-            /* Responsive monitor sizing */
             #egor-pc-monitor-wrap {
                 transform: none !important;
                 max-width: 95vw !important;
                 width: 95vw !important;
             }
 
-            /* Reduce monitor border on mobile */
-            #egor-pc-monitor-wrap > div:first-child {
-                border-width: 8px !important;
+            header {
+                display: block !important;
+            }
+
+            .monitor-screen-btn {
+                display: none !important;
             }
         }
 
-        /* Landscape specific tweaks for mobile */
-        @media (max-height: 550px) and (orientation: landscape) and (hover: none) and (pointer: coarse) {
-            .pc-main-layout {
-                flex-direction: row !important;
-                align-items: flex-end !important;
-                gap: 1.5rem !important;
-            }
-
-            #egor-pc-monitor-wrap {
-                max-width: min(65vw, 550px) !important;
-            }
-
-            .pc-sysunit {
-                height: 180px !important;
-                width: 100px !important;
-            }
-
-            header .header-content {
-                height: 40px !important;
-            }
-
-            .logo-text {
-                font-size: 1rem !important;
-            }
-
-            .pc-workspace {
-                min-height: calc(100vh - 40px) !important;
-            }
-        }
-
-        /* ====== DESKTOP FALLBACK (non-touch) — keep original ====== */
+        /* ====== DESKTOP FULLSCREEN MODE ====== */
         @media (hover: hover) and (pointer: fine) {
             #mobile-power-btn {
                 display: none !important;
             }
+
+            header {
+                display: none;
+            }
+
+            .pc-workspace {
+                padding: 0;
+                min-height: 100vh;
+            }
+
+            #egor-pc-monitor-wrap {
+                transform: none;
+                max-width: min(85vw, 900px);
+            }
+
+            @media (min-width: 1400px) {
+                #egor-pc-monitor-wrap {
+                    max-width: min(75vw, 1000px);
+                }
+            }
+        }
+
+        /* Exit fullscreen button */
+        #exit-fullscreen-btn {
+            position: fixed;
+            top: 1rem;
+            left: 1rem;
+            z-index: 10001;
+            background: rgba(17, 24, 39, 0.9);
+            border: 1px solid rgba(168, 85, 247, 0.3);
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+            cursor: pointer;
+            font-size: 0.875rem;
+            backdrop-filter: blur(10px);
+            transition: all 0.3s ease;
+            display: none;
+        }
+
+        #exit-fullscreen-btn:hover {
+            background: rgba(168, 85, 247, 0.3);
+            border-color: rgba(168, 85, 247, 0.6);
+        }
+
+        :fullscreen #exit-fullscreen-btn,
+        :-webkit-full-screen #exit-fullscreen-btn,
+        :-moz-full-screen #exit-fullscreen-btn {
+            display: block;
         }
     </style>
 </head>
@@ -483,6 +640,10 @@
         <div class="video-overlay"></div>
     </div>
 
+    <!-- Exit fullscreen button -->
+    <button id="exit-fullscreen-btn" onclick="exitFullscreen()">
+        <i class="fas fa-compress mr-2"></i>Выход
+    </button>
 
     <!-- Floating power button for mobile -->
     <div id="mobile-power-btn">
@@ -512,12 +673,25 @@
     </header>
 
     <main class="pc-workspace">
-        <div class="pc-main-layout flex flex-col md:flex-row items-end justify-center gap-12 z-10 w-full max-w-6xl">
+        <div class="pc-main-layout flex items-center justify-center z-10 w-full">
             <!-- Монитор -->
             <div id="egor-pc-monitor-wrap"
                 class="relative w-full max-w-[800px] flex flex-col items-center shrink transition-all duration-500">
+                
+                <!-- X close button - top right outside bezel -->
+                <button type="button" id="monitor-close-btn" class="monitor-screen-btn monitor-close-btn" aria-label="Выход" onclick="window.location.href='index.html'">
+                    <span class="monitor-close-btn__x" aria-hidden="true"></span>
+                </button>
+                <!-- Orange power button - bottom right outside bezel -->
+                <button type="button" id="monitor-power-btn" class="monitor-screen-btn monitor-power-btn" aria-label="Питание">
+                    <svg class="monitor-power-btn__icon" viewBox="0 0 24 24" aria-hidden="true">
+                        <path d="M12 2v10" stroke-linecap="round" />
+                        <path d="M18.364 5.636a9 9 0 1 1-12.728 0" stroke-linecap="round" />
+                    </svg>
+                </button>
+
                 <div
-                    class="w-full bg-black rounded-lg border-4 sm:border-[12px] border-gray-800 shadow-[0_30px_60px_rgba(0,0,0,0.9)] relative overflow-hidden aspect-video">
+                    class="w-full bg-black rounded-lg border-[12px] border-gray-800 shadow-[0_30px_60px_rgba(0,0,0,0.9)] relative overflow-hidden aspect-video">
 
                     <!-- Выключен -->
                     <div id="egor-pc-screen-off" class="absolute inset-0 bg-black z-50"></div>
@@ -565,7 +739,7 @@
                                     <div class="flex-1 bg-white border border-gray-200 rounded px-3 py-1.5 text-gray-600 flex items-center shadow-inner overflow-hidden text-ellipsis whitespace-nowrap"
                                         id="os-path-bar">Этот компьютер</div>
                                 </div>
-                                <div class="flex-1 bg-white p-6 overflow-y-auto" id="os-explorer-content">
+                                <div class="flex-1 min-h-0 bg-white p-6 overflow-y-auto" id="os-explorer-content">
                                     <!-- Контент проводника -->
                                 </div>
                             </div>
@@ -588,9 +762,9 @@
 
                             <!-- Текстовый редактор -->
                             <div id="os-window-notepad"
-                                class="absolute top-[10%] left-[10%] w-[80%] h-[60%] sm:w-[60%] sm:h-[50%] bg-white shadow-2xl rounded-lg hidden flex-col overflow-hidden text-gray-800 z-50 border border-gray-200">
+                                class="absolute inset-[5%] hidden flex flex-col overflow-hidden bg-white shadow-2xl rounded-lg text-gray-800 z-[55] border border-gray-200">
                                 <div
-                                    class="h-10 bg-gray-100 border-b border-gray-200 flex justify-between items-center px-4 select-none">
+                                    class="h-10 shrink-0 bg-gray-100 border-b border-gray-200 flex justify-between items-center px-4 select-none">
                                     <span
                                         class="font-medium text-sm flex items-center gap-3 overflow-hidden text-ellipsis whitespace-nowrap"
                                         id="os-notepad-title"><i class="fas fa-file-alt text-blue-400"></i> pass.txt -
@@ -599,7 +773,7 @@
                                         class="text-gray-500 hover:text-red-500 focus:outline-none shrink-0"><i
                                             class="fas fa-times text-lg"></i></button>
                                 </div>
-                                <div class="flex-1 p-6 font-mono text-sm text-gray-800 bg-white"
+                                <div class="flex-1 min-h-0 p-4 sm:p-6 font-mono text-sm text-gray-800 bg-white"
                                     id="os-notepad-content">
                                     0921
                                 </div>
@@ -690,47 +864,50 @@
                 <div class="monitor-stand-base w-48 h-3 bg-gray-800 rounded-b-xl shadow-2xl"></div>
             </div>
 
-            <!-- Системный блок -->
-            <div
-                class="pc-sysunit w-40 h-80 bg-gray-800 rounded-xl border border-gray-600 shadow-[inset_-10px_0_40px_rgba(0,0,0,0.6),0_30px_60px_rgba(0,0,0,0.8)] flex flex-col justify-between p-4 shrink-0 relative mb-2">
-                <div
-                    class="sysunit-leds h-8 w-full bg-gray-900 rounded-lg flex gap-3 items-center px-4 border-b border-gray-700 shadow-inner">
-                    <div class="w-2 h-2 bg-red-500 rounded-full opacity-30 shadow-[0_0_5px_red]" id="pc-led-hdd"></div>
-                    <div class="w-2 h-2 bg-green-500 rounded-full opacity-20 shadow-[0_0_5px_green]" id="pc-led-pwr">
-                    </div>
-                </div>
-                <div class="sysunit-bays mt-4 space-y-2">
-                    <div class="w-full h-8 bg-gray-900 border border-gray-700 rounded-md flex items-center px-3">
-                        <div class="w-full h-[3px] bg-black rounded-full"></div>
-                    </div>
-                    <div class="w-full h-8 bg-gray-900 border border-gray-700 rounded-md flex items-center px-3">
-                        <div class="w-full h-[3px] bg-black rounded-full"></div>
-                    </div>
-                </div>
-                <div class="sysunit-vents flex-1 my-6 flex flex-col gap-2 justify-center px-6 opacity-60">
-                    <div class="w-full h-1 bg-black rounded-full"></div>
-                    <div class="w-full h-1 bg-black rounded-full"></div>
-                    <div class="w-full h-1 bg-black rounded-full"></div>
-                    <div class="w-full h-1 bg-black rounded-full"></div>
-                    <div class="w-full h-1 bg-black rounded-full"></div>
-                    <div class="w-full h-1 bg-black rounded-full"></div>
-                </div>
-                <div
-                    class="sysunit-power h-24 bg-gray-900 rounded-lg flex flex-col items-center justify-center border-t border-gray-700">
-                    <button id="egor-pc-power-btn"
-                        class="w-14 h-14 rounded-full bg-gray-700 border border-gray-500 flex items-center justify-center transition-all focus:outline-none shadow-[0_6px_12px_rgba(0,0,0,0.6),inset_0_1px_4px_rgba(255,255,255,0.1)] active:scale-95 group hover:bg-gray-600">
-                        <i class="fas fa-power-off text-gray-500 text-2xl group-hover:text-blue-300 transition-colors"
-                            id="pc-pwr-icon"></i>
-                    </button>
-                </div>
-            </div>
         </div>
     </main>
 
     <script>
         (function () {
-            // ========== MOBILE DETECTION ==========
+            // ========== FULLSCREEN FUNCTIONALITY ==========
+            function enterFullscreen() {
+                const docEl = document.documentElement;
+                if (docEl.requestFullscreen) {
+                    docEl.requestFullscreen().catch(() => {});
+                } else if (docEl.webkitRequestFullscreen) {
+                    docEl.webkitRequestFullscreen();
+                } else if (docEl.mozRequestFullScreen) {
+                    docEl.mozRequestFullScreen();
+                } else if (docEl.msRequestFullscreen) {
+                    docEl.msRequestFullscreen();
+                }
+            }
+
+            function exitFullscreen() {
+                if (document.exitFullscreen) {
+                    document.exitFullscreen().catch(() => {});
+                } else if (document.webkitExitFullscreen) {
+                    document.webkitExitFullscreen();
+                } else if (document.mozCancelFullScreen) {
+                    document.mozCancelFullScreen();
+                } else if (document.msExitFullscreen) {
+                    document.msExitFullscreen();
+                }
+            }
+
+            // Auto-enter fullscreen on desktop after first interaction
             const isTouchDevice = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
+            if (!isTouchDevice) {
+                document.addEventListener('click', function autoFullscreen() {
+                    enterFullscreen();
+                    document.removeEventListener('click', autoFullscreen);
+                }, { once: true });
+            }
+
+            // Make exitFullscreen global for the button
+            window.exitFullscreen = exitFullscreen;
+
+            // ========== MOBILE DETECTION ==========
 
             // ========== AUDIO CONTEXT UNLOCK ==========
             const audioUnlockOverlay = document.getElementById('audio-unlock');
@@ -783,14 +960,11 @@
             }
 
             // ========== ELEMENTS ==========
-            const btnPwr = document.getElementById('egor-pc-power-btn');
+            const monitorPwrBtn = document.getElementById('monitor-power-btn');
             const screenOff = document.getElementById('egor-pc-screen-off');
             const screenBoot = document.getElementById('egor-pc-screen-boot');
             const bootLogo = document.getElementById('egor-pc-boot-logo');
             const screenOs = document.getElementById('egor-pc-screen-os');
-            const pwrIcon = document.getElementById('pc-pwr-icon');
-            const ledPwr = document.getElementById('pc-led-pwr');
-            const ledHdd = document.getElementById('pc-led-hdd');
             const desktopIconsContainer = document.getElementById('os-desktop-icons');
             const taskbarTime = document.getElementById('os-taskbar-time');
             const taskbarDate = document.getElementById('os-taskbar-date');
@@ -833,7 +1007,7 @@
             let clockInterval;
             let currentPath = [];
 
-            // ========== FILE SYSTEM ==========
+            // ========== FILE SYSTEM (with links.txt from pc_m.html) ==========
             const osFiles = {
                 type: 'root',
                 children: [
@@ -841,7 +1015,8 @@
                         name: 'Desktop', id: 'Desktop', type: 'hidden', children: [
                             { name: 'Этот компьютер', id: 'sys_computer', type: 'app_computer', icon: 'fa-desktop text-blue-300' },
                             { name: 'Корзина', id: 'sys_trash', type: 'app_trash', icon: 'fa-trash-alt text-gray-400' },
-                            { name: 'readme.txt', id: 'readme', type: 'text', icon: 'fa-file-alt text-gray-200', content: 'Система инициализирована. Ожидание указаний.' }
+                            { name: 'readme.txt', id: 'readme', type: 'text', icon: 'fa-file-alt text-gray-200', content: 'Система инициализирована. Ожидание указаний.' },
+                            { name: 'links.txt', id: 'links', type: 'links_file', icon: 'fa-file-alt text-yellow-300', content: 'МП с Егором #1\nhttps://youtu.be/DJpC81JinF0?si=a-1L1O1ZlbBpSY7r\n\nМП с Егором #2\nhttps://youtu.be/N6oYETLgrx8?si=Dm5pGO9BQfpS4jrk', links: ['https://youtu.be/DJpC81JinF0?si=a-1L1O1ZlbBpSY7r', 'https://youtu.be/N6oYETLgrx8?si=Dm5pGO9BQfpS4jrk'] }
                         ]
                     },
                     {
@@ -931,36 +1106,22 @@
             function simulateHdd() {
                 if (!isPcOn) return;
                 clearInterval(hddInterval);
-                hddInterval = setInterval(() => {
-                    ledHdd.classList.toggle('opacity-30');
-                    ledHdd.classList.toggle('opacity-100');
-                }, Math.random() * 500 + 100);
+                hddInterval = setInterval(() => {}, Math.random() * 500 + 100);
             }
 
-            // ========== DESKTOP ==========
-            const isMobile = isTouchDevice;
-
+            // ========== DESKTOP (icon-only, no labels, neat grid) ==========
             function populateDesktop() {
                 desktopIconsContainer.innerHTML = '';
                 const dFiles = osFiles.children.find(c => c.id === 'Desktop').children;
                 dFiles.forEach(item => {
                     const el = document.createElement('div');
-                    el.className = 'cursor-pointer hover:bg-white/10 p-2 rounded transition-colors group flex flex-col items-center';
-                    el.style.width = '6rem';
-                    if (item.id === 'sys_trash') {
-                        el.classList.add('absolute');
-                        el.style.top = '2rem';
-                        el.style.right = '2rem';
-                    } else if (item.id === 'readme') {
-                        el.classList.add('absolute');
-                        el.style.bottom = '2rem';
-                        el.style.left = '2rem';
-                    }
-                    el.innerHTML = '<i class="fas ' + item.icon + ' text-4xl drop-shadow-md mb-1"></i><span class="text-xs text-white text-center shadow-[0_1px_3px_rgba(0,0,0,0.8)] group-hover:bg-blue-600/80 rounded px-1 py-0.5 leading-tight">' + item.name + '</span>';
+                    el.className = 'desktop-shortcut';
+                    el.innerHTML = '<i class="fas ' + item.icon + '"></i>';
                     el.onclick = () => {
                         playSound(audioClickObj);
                         if (item.type === 'app_computer') { currentPath = []; winExplorer.classList.remove('hidden'); renderExplorer(); }
-                        else if (item.type === 'text') { document.getElementById('os-notepad-title').innerHTML = '<i class="fas fa-file-alt text-blue-400"></i> ' + item.name + ' - Блокнот'; notepadContent.textContent = item.content; winNotepad.classList.remove('hidden'); }
+                        else if (item.type === 'text') { openNotepad(item.name, item.content); }
+                        else if (item.type === 'links_file') { openNotepad(item.name, item.content, item.links); }
                     };
                     desktopIconsContainer.appendChild(el);
                 });
@@ -995,11 +1156,42 @@
                         playSound(audioClickObj);
                         if (item.type === 'folder' || item.type === 'drive' || item.type === 'network' || item.type === 'network_pc') { currentPath.push(item.id); renderExplorer(); }
                         else if (item.type === 'locked_folder') openPasswordPrompt(item);
-                        else if (item.type === 'text') { document.getElementById('os-notepad-title').innerHTML = '<i class="fas fa-file-alt text-blue-400"></i> ' + item.name + ' - Блокнот'; notepadContent.textContent = item.content; winNotepad.classList.remove('hidden'); }
+                        else if (item.type === 'text') { openNotepad(item.name, item.content); }
+                        else if (item.type === 'links_file') { openNotepad(item.name, item.content, item.links); }
                     };
                     grid.appendChild(el);
                 });
                 explorerContent.appendChild(grid);
+            }
+
+            // ========== NOTEPAD HELPER (from pc_m.html - handles links correctly) ==========
+            function openNotepad(name, content, links) {
+                document.getElementById('os-notepad-title').innerHTML = '<i class="fas fa-file-alt text-blue-400"></i> ' + name + ' - Блокнот';
+                notepadContent.innerHTML = '';
+                const textDiv = document.createElement('div');
+                textDiv.style.whiteSpace = 'pre-wrap';
+                textDiv.style.wordBreak = 'break-all';
+                textDiv.textContent = content;
+                notepadContent.appendChild(textDiv);
+                if (links && links.length) {
+                    const btnWrap = document.createElement('div');
+                    btnWrap.style.cssText = 'display:flex;gap:8px;margin-top:16px;justify-content:center;flex-wrap:wrap;';
+                    links.forEach((url, i) => {
+                        const btn = document.createElement('button');
+                        btn.type = 'button';
+                        btn.textContent = 'Открыть ссылку ' + (i + 1);
+                        btn.style.cssText = 'display:inline-block;padding:10px 18px;background:#3b82f6;color:white;border-radius:20px;font-size:12px;font-weight:600;cursor:pointer;transition:background 0.2s;border:none;';
+                        btn.onmouseenter = () => { btn.style.background = '#2563eb'; };
+                        btn.onmouseleave = () => { btn.style.background = '#3b82f6'; };
+                        btn.addEventListener('click', () => {
+                            playSound(audioClickObj);
+                            window.open(url, '_blank', 'noopener,noreferrer');
+                        });
+                        btnWrap.appendChild(btn);
+                    });
+                    notepadContent.appendChild(btnWrap);
+                }
+                winNotepad.classList.remove('hidden');
             }
 
             // ========== UI HANDLERS ==========
@@ -1073,27 +1265,16 @@
                     winGallery.classList.add('hidden');
                     winPassword.classList.remove('flex');
                     winGallery.classList.remove('flex');
-                    pwrIcon.classList.remove('text-blue-400');
-                    pwrIcon.classList.add('text-gray-500');
-                    ledPwr.classList.remove('opacity-100', 'shadow-[0_0_8px_#22c55e]');
-                    ledPwr.classList.add('opacity-20');
                     clearInterval(hddInterval);
                     clearInterval(clockInterval);
-                    ledHdd.classList.remove('opacity-100');
-                    ledHdd.classList.add('opacity-30');
-                    // Play/Pause noise
                     audioNoise.pause();
                     audioNoise.currentTime = 0;
                     audioPwr.pause();
-                    // Update mobile power btn
+                    if (monitorPwrBtn) monitorPwrBtn.classList.remove('monitor-power-btn--on');
                     const mpb = document.getElementById('mobile-power-btn');
                     if (mpb) mpb.classList.remove('on');
                 } else {
                     isPcOn = true;
-                    pwrIcon.classList.remove('text-gray-500');
-                    pwrIcon.classList.add('text-blue-400');
-                    ledPwr.classList.remove('opacity-20');
-                    ledPwr.classList.add('opacity-100', 'shadow-[0_0_8px_#22c55e]');
                     screenOff.classList.add('hidden');
                     screenBoot.classList.remove('hidden');
                     bootLogo.classList.remove('opacity-100');
@@ -1120,13 +1301,19 @@
                             audioNoise.play().catch(e => { });
                         }, 200);
                     };
-                    // Update mobile power btn
+                    if (monitorPwrBtn) monitorPwrBtn.classList.add('monitor-power-btn--on');
                     const mpb = document.getElementById('mobile-power-btn');
                     if (mpb) mpb.classList.add('on');
                 }
             }
 
-            btnPwr.onclick = doPowerToggle;
+            // Monitor power button
+            if (monitorPwrBtn) {
+                monitorPwrBtn.onclick = (e) => {
+                    e.stopPropagation();
+                    doPowerToggle();
+                };
+            }
 
             // ========== MOBILE FLOATING POWER BUTTON ==========
             const mobilePowerBtn = document.getElementById('mobile-power-btn');
