@@ -3,7 +3,10 @@
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="theme-color" content="#030712">
     <title>OCEAN OS - Mobile</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -20,13 +23,21 @@
             box-sizing: border-box;
         }
 
+        html {
+            height: 100%;
+            height: 100dvh;
+        }
+
         body {
             font-family: 'Inter', sans-serif;
             background-color: #030712;
             color: #e2e8f0;
             margin: 0;
             padding: 0;
+            min-height: 100vh;
+            min-height: 100dvh;
             height: 100vh;
+            height: 100dvh;
             display: flex;
             flex-direction: column;
             overflow: hidden;
@@ -132,8 +143,7 @@
             touch-action: manipulation;
         }
 
-        .egor-file-item:hover,
-        .egor-file-item.hover-sim {
+        .egor-file-item:hover {
             background: rgba(0, 120, 215, 0.1);
         }
 
@@ -156,7 +166,47 @@
             }
         }
 
-        /* Вся область «экрана» ОС — одна зона для курсора (рабочий стол + панель задач + меню) */
+        /* Desktop icons: icon-only, no labels, compact rounded tiles */
+        #os-desktop-icons {
+            display: grid !important;
+            grid-template-columns: repeat(2, auto);
+            gap: 0.75rem;
+            padding: 1rem 1.2rem !important;
+            justify-content: start;
+            align-content: start;
+        }
+
+        .desktop-shortcut {
+            width: 3.6rem;
+            height: 3.6rem;
+            border-radius: 0.85rem;
+            background: rgba(15, 23, 42, 0.72);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            box-shadow: 0 6px 18px rgba(0, 0, 0, 0.35);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .desktop-shortcut:hover {
+            background: rgba(15, 23, 42, 0.9);
+            transform: scale(1.06);
+        }
+
+        .desktop-shortcut:active {
+            transform: scale(0.95);
+        }
+
+        .desktop-shortcut i {
+            font-size: 1.55rem;
+            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.4));
+        }
+
+        /* Вся область «экрана» ОС */
         #egor-pc-screen-os {
             position: relative;
             height: 100%;
@@ -164,46 +214,24 @@
             box-sizing: border-box;
         }
 
-        #egor-pc-screen-os.touch-cursor-capture {
-            touch-action: none;
-        }
-
         #os-workspace {
             min-height: 0;
         }
 
-        /* Виртуальный курсор: координаты в % от полного экрана монитора */
-        #virtual-cursor {
-            position: absolute;
-            width: 24px;
-            height: 24px;
-            pointer-events: none;
-            z-index: 9999;
-            filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.5));
-            display: none;
-            top: 50%;
-            left: 50%;
-            margin-left: -2px;
-            margin-top: -2px;
-            transition: transform 0.1s ease-out;
+        /* Notepad: bounded flex column (only when visible — do not override .hidden) */
+        #os-window-notepad:not(.hidden) {
+            display: flex;
+            flex-direction: column;
+            min-height: 0;
         }
 
-        #virtual-cursor.active {
-            display: block;
-        }
-
-        .cursor-pointer-svg {
-            width: 100%;
-            height: 100%;
-            fill: white;
-            stroke: black;
-            stroke-width: 1px;
-        }
-
-        /* Hover simulation highlight */
-        .hover-sim {
-            background: rgba(0, 120, 215, 0.2) !important;
-            border-radius: 4px;
+        #os-notepad-content {
+            flex: 1 1 0%;
+            min-height: 0;
+            overflow-y: scroll;
+            -webkit-overflow-scrolling: touch;
+            overscroll-behavior: contain;
+            touch-action: pan-y;
         }
 
         /* Рамка экрана: классическая 16:9, без раздувания flex’ом */
@@ -223,6 +251,7 @@
             display: flex;
             flex-direction: column;
             align-items: center;
+            align-self: stretch;
         }
 
         #egor-pc-monitor-wrap .monitor-stand-neck {
@@ -233,10 +262,16 @@
             width: min(12rem, 42vw);
         }
 
-        /* Ensure all interactive elements are tap-friendly */
+        /* Tap feedback — do not apply touch-action: manipulation to all <a>
+           (breaks vertical scrolling inside notepad on iOS when links are present) */
         button,
-        a,
         .egor-file-item {
+            touch-action: manipulation;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        header a,
+        .logo-text {
             touch-action: manipulation;
             -webkit-tap-highlight-color: transparent;
         }
@@ -397,66 +432,98 @@
             font-weight: 400;
         }
 
-        /* Плавающая кнопка питания */
-        #mobile-power-btn {
-            display: flex;
-            position: fixed;
-            bottom: 1.5rem;
-            right: 1.5rem;
-            width: 64px;
-            height: 64px;
-            border-radius: 50%;
-            background: rgba(31, 41, 55, 0.9);
-            border: 2px solid rgba(107, 114, 128, 0.4);
-            color: #9ca3af;
-            font-size: 1.6rem;
-            z-index: 200;
+        /* Monitor frame buttons — same as pc.html (photo reference) */
+        .monitor-screen-btn {
+            position: absolute;
+            z-index: 60;
+            border: none;
+            padding: 0;
+            touch-action: manipulation;
+            -webkit-tap-highlight-color: transparent;
             cursor: pointer;
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.6);
-            transition: all 0.3s ease;
+            transition: transform 0.2s ease;
+        }
+
+        .monitor-screen-btn:active {
+            transform: scale(0.94);
+        }
+
+        .monitor-close-btn {
+            top: 0.35rem;
+            right: 0.35rem;
+            width: 34px;
+            height: 34px;
+            border-radius: 7px;
+            background: #000;
+            box-shadow: 0 4px 14px rgba(0, 0, 0, 0.65);
+            display: flex;
             align-items: center;
             justify-content: center;
         }
 
-        #mobile-power-btn:active {
-            transform: scale(0.9);
+        .monitor-close-btn__x {
+            position: relative;
+            width: 42%;
+            height: 42%;
+            display: block;
         }
 
-        #mobile-power-btn.on {
-            border-color: rgba(59, 130, 246, 0.6);
-            color: #60a5fa;
-            box-shadow: 0 0 25px rgba(59, 130, 246, 0.3);
+        .monitor-close-btn__x::before,
+        .monitor-close-btn__x::after {
+            content: '';
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            width: 132%;
+            height: 3px;
+            background: #fff;
+            border-radius: 2px;
+            transform-origin: center;
         }
 
-        #mobile-home-btn {
-            position: fixed;
-            left: 1rem;
-            bottom: 1rem;
-            z-index: 220;
-            height: 2.15rem;
-            padding: 0 0.85rem;
-            border-radius: 999px;
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            background: rgba(15, 23, 42, 0.85);
-            color: #e2e8f0;
-            font-size: 0.72rem;
-            font-weight: 600;
-            letter-spacing: 0.02em;
-            display: inline-flex;
+        .monitor-close-btn__x::before {
+            transform: translate(-50%, -50%) rotate(45deg);
+        }
+
+        .monitor-close-btn__x::after {
+            transform: translate(-50%, -50%) rotate(-45deg);
+        }
+
+        .monitor-power-btn {
+            bottom: 0.55rem;
+            right: 0.55rem;
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            background: linear-gradient(180deg, #ffb347 0%, #ff8c00 42%, #c2410c 100%);
+            box-shadow:
+                inset 0 2px 6px rgba(255, 255, 255, 0.35),
+                inset 0 -3px 10px rgba(0, 0, 0, 0.35),
+                0 8px 22px rgba(0, 0, 0, 0.55);
+            display: flex;
             align-items: center;
-            gap: 0.4rem;
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
-            box-shadow: 0 10px 28px rgba(0, 0, 0, 0.45);
-            transition: transform 0.2s ease, background 0.2s ease;
+            justify-content: center;
         }
 
-        #mobile-home-btn:active {
-            transform: scale(0.96);
-            background: rgba(30, 41, 59, 0.9);
+        .monitor-power-btn--on {
+            box-shadow:
+                inset 0 2px 6px rgba(255, 255, 255, 0.45),
+                inset 0 -3px 10px rgba(0, 0, 0, 0.25),
+                0 0 0 2px rgba(255, 255, 255, 0.35),
+                0 10px 26px rgba(234, 88, 12, 0.45);
         }
 
-        /* Смартфон: fullscreen-режим (референс: крупные элементы и ярлыки) */
+        .monitor-power-btn__icon {
+            width: 52%;
+            height: 52%;
+            display: block;
+            fill: none;
+            stroke: #fff;
+            stroke-width: 2;
+            stroke-linecap: round;
+        }
+
+        /* Touch / landscape phone: same monitor frame as desktop (bezel + stand), scaled to fit */
         @media (hover: none) and (pointer: coarse) {
             body {
                 overflow: hidden !important;
@@ -471,10 +538,10 @@
             }
 
             .pc-workspace {
-                padding: 0 !important;
+                padding: max(0.35rem, env(safe-area-inset-top)) max(0.35rem, env(safe-area-inset-right)) max(0.35rem, env(safe-area-inset-bottom)) max(0.35rem, env(safe-area-inset-left)) !important;
                 overflow: hidden !important;
                 display: flex !important;
-                align-items: stretch !important;
+                align-items: center !important;
                 justify-content: center !important;
                 min-height: 0 !important;
                 flex: 1 1 auto !important;
@@ -483,8 +550,8 @@
 
             .pc-main-layout {
                 flex-direction: row !important;
-                align-items: stretch !important;
-                justify-content: stretch !important;
+                align-items: center !important;
+                justify-content: center !important;
                 gap: 0 !important;
                 width: 100% !important;
                 max-width: 100% !important;
@@ -495,34 +562,28 @@
             }
 
             #egor-pc-monitor-wrap {
-                flex: 1 1 100% !important;
-                min-width: 100% !important;
+                flex: 0 1 auto !important;
+                width: min(96vw, 900px) !important;
                 max-width: 100% !important;
-                width: 100% !important;
-                height: 100% !important;
+                max-height: 100% !important;
+                min-height: 0 !important;
                 justify-content: center !important;
             }
 
-            #egor-pc-monitor-wrap>div.pc-monitor-bezel:first-child {
-                border-width: 0 !important;
-                border-radius: 0 !important;
+            #egor-pc-monitor-wrap .pc-monitor-bezel {
                 width: 100% !important;
-                height: 100% !important;
-                max-width: none !important;
-                max-height: none !important;
-                aspect-ratio: auto !important;
+                max-width: 100% !important;
+                max-height: calc(100dvh - 5.5rem) !important;
+                height: auto !important;
+                aspect-ratio: 16 / 9 !important;
+                border-width: 12px !important;
+                border-radius: 0.5rem !important;
+                flex: 0 0 auto !important;
             }
 
-            #egor-pc-monitor-wrap .monitor-stand-neck {
-                display: none !important;
-            }
-
+            #egor-pc-monitor-wrap .monitor-stand-neck,
             #egor-pc-monitor-wrap .monitor-stand-base {
-                display: none !important;
-            }
-
-            .pc-sysunit {
-                display: none !important;
+                display: block !important;
             }
 
             #egor-pc-screen-os {
@@ -531,24 +592,19 @@
             }
 
             #os-desktop-icons {
-                padding: 0.9rem !important;
-                gap: 0.9rem !important;
-                align-content: flex-start !important;
+                grid-template-columns: repeat(2, auto) !important;
+                gap: 0.85rem !important;
+                padding: 1rem 1.2rem !important;
             }
 
             #os-desktop-icons .desktop-shortcut {
-                width: 4.9rem !important;
-                min-height: 4.9rem !important;
+                width: 4rem !important;
+                height: 4rem !important;
+                border-radius: 1rem !important;
             }
 
             #os-desktop-icons .desktop-shortcut i {
-                font-size: 2.05rem !important;
-                margin-bottom: 0.38rem !important;
-            }
-
-            #os-desktop-icons .desktop-shortcut span {
-                font-size: 0.67rem !important;
-                line-height: 1.1 !important;
+                font-size: 1.75rem !important;
             }
 
             #os-taskbar {
@@ -556,35 +612,17 @@
                 padding-left: 0.75rem !important;
                 padding-right: 0.75rem !important;
             }
-
-            #mobile-power-btn {
-                bottom: 1rem !important;
-                right: 4.85rem !important;
-                width: 3rem !important;
-                height: 3rem !important;
-                border-width: 2px !important;
-                background: radial-gradient(circle at 35% 30%, #3b82f6, #1d4ed8 70%) !important;
-                color: #bfdbfe !important;
-                border-color: rgba(59, 130, 246, 0.75) !important;
-                box-shadow: 0 0 20px rgba(37, 99, 235, 0.45), 0 10px 30px rgba(0, 0, 0, 0.45) !important;
-            }
-
-            #pc-pwr-icon {
-                color: #dbeafe !important;
-            }
         }
 
         @media (hover: none) and (pointer: coarse) and (max-height: 520px) {
-            #mobile-power-btn {
-                width: 2.65rem !important;
-                height: 2.65rem !important;
-                right: 4.35rem !important;
+            .monitor-power-btn {
+                width: 44px !important;
+                height: 44px !important;
             }
 
-            #mobile-home-btn {
-                height: 1.95rem !important;
-                padding: 0 0.7rem !important;
-                font-size: 0.66rem !important;
+            .monitor-close-btn {
+                width: 30px !important;
+                height: 30px !important;
             }
         }
     </style>
@@ -609,15 +647,6 @@
         </div>
     </div>
 
-    <!-- Кнопка питания -->
-    <div id="mobile-power-btn">
-        <i class="fas fa-power-off text-gray-500 transition-colors" id="pc-pwr-icon"></i>
-    </div>
-    <button id="mobile-home-btn" type="button" aria-label="Вернуться на главную">
-        <i class="fas fa-house"></i>
-        <span>Главная</span>
-    </button>
-
     <!-- Audio unlock overlay for mobile -->
     <div id="audio-unlock" class="audio-unlock-overlay" style="display:none;">
         <div class="audio-unlock-icon">
@@ -641,12 +670,21 @@
     </header>
 
     <main class="pc-workspace">
-        <div class="pc-main-layout flex flex-row items-end justify-center gap-4 sm:gap-8 md:gap-12 z-10 w-full max-w-6xl px-0.5 sm:px-2">
-            <!-- Монитор -->
+        <div class="pc-main-layout flex flex-row items-center justify-center z-10 w-full max-w-6xl px-0.5 sm:px-2">
+            <!-- Монитор (как pc.html: рамка, подставка, X и питание на рамке) -->
             <div id="egor-pc-monitor-wrap"
                 class="relative w-full max-w-[800px] flex flex-col items-center shrink transition-all duration-500">
+                <button type="button" id="monitor-close-btn" class="monitor-screen-btn monitor-close-btn" aria-label="Выход">
+                    <span class="monitor-close-btn__x" aria-hidden="true"></span>
+                </button>
+                <button type="button" id="monitor-power-btn" class="monitor-screen-btn monitor-power-btn" aria-label="Питание">
+                    <svg class="monitor-power-btn__icon" viewBox="0 0 24 24" aria-hidden="true">
+                        <path d="M12 2v10" stroke-linecap="round" />
+                        <path d="M18.364 5.636a9 9 0 1 1-12.728 0" stroke-linecap="round" />
+                    </svg>
+                </button>
                 <div
-                    class="pc-monitor-bezel w-full bg-black rounded-lg border-4 sm:border-[12px] border-gray-800 shadow-[0_30px_60px_rgba(0,0,0,0.9)] relative overflow-hidden aspect-video">
+                    class="pc-monitor-bezel w-full bg-black rounded-lg border-[12px] border-gray-800 shadow-[0_30px_60px_rgba(0,0,0,0.9)] relative overflow-hidden aspect-video">
 
                     <!-- Выключен -->
                     <div id="egor-pc-screen-off" class="absolute inset-0 bg-black z-50"></div>
@@ -694,7 +732,7 @@
                                     <div class="flex-1 bg-white border border-gray-200 rounded px-3 py-1.5 text-gray-600 flex items-center shadow-inner overflow-hidden text-ellipsis whitespace-nowrap"
                                         id="os-path-bar">Этот компьютер</div>
                                 </div>
-                                <div class="flex-1 bg-white p-6 overflow-y-auto" id="os-explorer-content">
+                                <div class="flex-1 min-h-0 bg-white p-6 overflow-y-auto" id="os-explorer-content">
                                     <!-- Контент проводника -->
                                 </div>
                             </div>
@@ -707,7 +745,8 @@
                                         class="fas fa-times"></i></button>
                                 <i class="fas fa-lock text-4xl text-blue-500 mb-6"></i>
                                 <h5 class="text-base font-semibold mb-6 text-center">Требуется пароль</h5>
-                                <input type="password" id="os-pwd-input" inputmode="numeric" autocomplete="current-password" enterkeyhint="done"
+                                <input type="password" id="os-pwd-input" inputmode="numeric"
+                                    autocomplete="current-password" enterkeyhint="done"
                                     class="w-full border border-gray-300 rounded-lg px-4 py-2 text-center text-lg mb-3 focus:outline-none focus:border-blue-500 shadow-inner"
                                     placeholder="••••">
                                 <p id="os-pwd-error" class="text-orange-600 text-xs hidden mb-4">Неверный пароль</p>
@@ -717,9 +756,9 @@
 
                             <!-- Текстовый редактор -->
                             <div id="os-window-notepad"
-                                class="absolute top-[10%] left-[10%] w-[80%] h-[60%] sm:w-[60%] sm:h-[50%] bg-white shadow-2xl rounded-lg hidden flex-col overflow-hidden text-gray-800 z-50 border border-gray-200">
+                                class="absolute inset-[5%] hidden flex flex-col overflow-hidden bg-white shadow-2xl rounded-lg text-gray-800 z-[55] border border-gray-200">
                                 <div
-                                    class="h-10 bg-gray-100 border-b border-gray-200 flex justify-between items-center px-4 select-none">
+                                    class="h-10 shrink-0 bg-gray-100 border-b border-gray-200 flex justify-between items-center px-4 select-none">
                                     <span
                                         class="font-medium text-sm flex items-center gap-3 overflow-hidden text-ellipsis whitespace-nowrap"
                                         id="os-notepad-title"><i class="fas fa-file-alt text-blue-400"></i> pass.txt -
@@ -728,7 +767,7 @@
                                         class="text-gray-500 hover:text-orange-500 focus:outline-none shrink-0"><i
                                             class="fas fa-times text-lg"></i></button>
                                 </div>
-                                <div class="flex-1 p-6 font-mono text-sm text-gray-800 bg-white"
+                                <div class="flex-1 min-h-0 p-4 sm:p-6 font-mono text-sm text-gray-800 bg-white"
                                     id="os-notepad-content">
                                     0921
                                 </div>
@@ -812,45 +851,12 @@
                             </div>
                         </div>
 
-                        <div id="virtual-cursor" aria-hidden="true">
-                            <svg class="cursor-pointer-svg" viewBox="0 0 24 24">
-                                <path d="M7 2l12 11.2-5.8.8 3.3 6-2.5 1.4-3.4-6.1L7 19z" />
-                            </svg>
-                        </div>
                     </div>
                 </div>
                 <!-- Подставка -->
                 <div class="monitor-stand-neck w-32 h-6 bg-gray-700 mt-0"
                     style="clip-path: polygon(10% 0, 90% 0, 100% 100%, 0% 100%);"></div>
                 <div class="monitor-stand-base w-48 h-3 bg-gray-800 rounded-b-xl shadow-2xl"></div>
-            </div>
-
-            <!-- Системный блок -->
-            <div
-                class="pc-sysunit w-40 h-80 bg-gray-800 rounded-xl border border-gray-600 shadow-[inset_-10px_0_40px_rgba(0,0,0,0.6),0_30px_60px_rgba(0,0,0,0.8)] flex flex-col justify-between p-4 shrink-0 relative mb-2">
-                <div
-                    class="sysunit-leds h-8 w-full bg-gray-900 rounded-lg flex gap-3 items-center px-4 border-b border-gray-700 shadow-inner">
-                    <div class="w-2 h-2 bg-amber-500 rounded-full opacity-30 shadow-[0_0_5px_rgba(245,158,11,0.5)]" id="pc-led-hdd"></div>
-                    <div class="w-2 h-2 bg-green-500 rounded-full opacity-20 shadow-[0_0_5px_green]" id="pc-led-pwr">
-                    </div>
-                </div>
-                <div class="sysunit-bays mt-4 space-y-2">
-                    <div class="w-full h-8 bg-gray-900 border border-gray-700 rounded-md flex items-center px-3">
-                        <div class="w-full h-[3px] bg-black rounded-full"></div>
-                    </div>
-                    <div class="w-full h-8 bg-gray-900 border border-gray-700 rounded-md flex items-center px-3">
-                        <div class="w-full h-[3px] bg-black rounded-full"></div>
-                    </div>
-                </div>
-                <div class="sysunit-vents flex-1 my-6 flex flex-col gap-2 justify-center px-6 opacity-60">
-                    <div class="w-full h-1 bg-black rounded-full"></div>
-                    <div class="w-full h-1 bg-black rounded-full"></div>
-                    <div class="w-full h-1 bg-black rounded-full"></div>
-                    <div class="w-full h-1 bg-black rounded-full"></div>
-                    <div class="w-full h-1 bg-black rounded-full"></div>
-                    <div class="w-full h-1 bg-black rounded-full"></div>
-                </div>
-                <div class="h-6 bg-gray-900 rounded-lg border-t border-gray-700 shrink-0" aria-hidden="true"></div>
             </div>
         </div>
     </main>
@@ -878,9 +884,8 @@
             const screenBoot = document.getElementById('egor-pc-screen-boot');
             const bootLogo = document.getElementById('egor-pc-boot-logo');
             const screenOs = document.getElementById('egor-pc-screen-os');
-            const pwrIcon = document.getElementById('pc-pwr-icon');
-            const ledPwr = document.getElementById('pc-led-pwr');
-            const ledHdd = document.getElementById('pc-led-hdd');
+            const monitorPwrBtn = document.getElementById('monitor-power-btn');
+            const monitorCloseBtn = document.getElementById('monitor-close-btn');
             const desktopIconsContainer = document.getElementById('os-desktop-icons');
             const taskbarTime = document.getElementById('os-taskbar-time');
             const taskbarDate = document.getElementById('os-taskbar-date');
@@ -908,8 +913,6 @@
             const galleryNext = document.getElementById('gallery-next');
             const galleryImg = document.getElementById('gallery-img');
             const galleryCounter = document.getElementById('gallery-counter');
-            const vCursor = document.getElementById('virtual-cursor');
-            const mobilePowerBtn = document.getElementById('mobile-power-btn');
 
             const audioPwr = new Audio('assets/sounds/computer/enable.mp3');
             audioPwr.volume = 0.5;
@@ -941,22 +944,27 @@
                     screenBoot.classList.add('hidden');
                     screenOs.classList.remove('hidden');
                     screenOs.style.display = 'flex';
-                    if (isTouchDevice) screenOs.classList.add('touch-cursor-capture');
                     populateDesktop();
                     updateClock();
                     clockInterval = setInterval(updateClock, 30000);
                     audioNoise.play().catch(() => { });
-                    if (isTouchDevice && vCursor) {
-                        vCursor.classList.add('active');
-                        cursorX = 50; cursorY = 50;
-                        updateVCursor();
-                    }
                 }, 200);
+            }
+
+            function tryEnterFullscreen() {
+                if (!isTouchDevice) return;
+                const docEl = document.documentElement;
+                if (document.fullscreenElement || document.webkitFullscreenElement) return;
+                const req = docEl.requestFullscreen
+                    || docEl.webkitRequestFullscreen
+                    || docEl.webkitEnterFullscreen;
+                if (req) req.call(docEl).catch(() => { });
             }
 
             function unlockAudioContext() {
                 if (audioContextUnlocked) return;
                 audioContextUnlocked = true;
+                tryEnterFullscreen();
                 const ctx = new (window.AudioContext || window.webkitAudioContext)();
                 ctx.resume().then(() => ctx.close());
                 [audioPwr, audioNoise, audioClickObj, audioKeyObj].forEach(a => {
@@ -980,95 +988,6 @@
                 const clone = audioEl.cloneNode();
                 clone.volume = audioEl.volume;
                 clone.play().catch(() => { });
-            }
-
-            let cursorX = 50;
-            let cursorY = 50;
-            let isVCursorMoving = false;
-            let lastVTouchX = 0;
-            let lastVTouchY = 0;
-
-            function pickHoverTarget(el) {
-                if (!el) return null;
-                const t = el.closest('.egor-file-item, button, a, [role="button"], label, .cursor-pointer');
-                if (t) return t;
-                if (el.closest('#os-taskbar')) {
-                    return el.closest('button, a, .cursor-pointer');
-                }
-                if (el.closest('#os-start-menu')) {
-                    return el.closest('button, a');
-                }
-                return null;
-            }
-
-            function updateVCursor() {
-                if (!vCursor || !screenOs) return;
-                vCursor.style.left = cursorX + '%';
-                vCursor.style.top = cursorY + '%';
-                if (isPcOn && isTouchDevice) {
-                    const rect = screenOs.getBoundingClientRect();
-                    const absX = rect.left + (cursorX / 100) * rect.width;
-                    const absY = rect.top + (cursorY / 100) * rect.height;
-                    const el = document.elementFromPoint(absX, absY);
-                    document.querySelectorAll('.hover-sim').forEach(n => n.classList.remove('hover-sim'));
-                    const target = pickHoverTarget(el);
-                    if (target) target.classList.add('hover-sim');
-                }
-            }
-
-            function shouldIgnoreVirtualCursorTouch(node) {
-                return node && node.closest && node.closest('#os-window-password');
-            }
-
-            const cursorTouchOpts = { passive: false, capture: true };
-
-            if (isTouchDevice && screenOs && vCursor) {
-                screenOs.addEventListener('touchstart', (e) => {
-                    if (!isPcOn) return;
-                    if (shouldIgnoreVirtualCursorTouch(e.target)) return;
-                    isVCursorMoving = false;
-                    lastVTouchX = e.touches[0].clientX;
-                    lastVTouchY = e.touches[0].clientY;
-                    vCursor.classList.add('active');
-                }, cursorTouchOpts);
-
-                screenOs.addEventListener('touchmove', (e) => {
-                    if (!isPcOn) return;
-                    const finger = e.touches[0];
-                    if (finger && shouldIgnoreVirtualCursorTouch(document.elementFromPoint(finger.clientX, finger.clientY))) {
-                        return;
-                    }
-                    if (shouldIgnoreVirtualCursorTouch(e.target)) return;
-                    e.preventDefault();
-                    isVCursorMoving = true;
-                    const dx = e.touches[0].clientX - lastVTouchX;
-                    const dy = e.touches[0].clientY - lastVTouchY;
-                    const sensitivity = 0.5;
-                    cursorX = Math.max(0.5, Math.min(99.5, cursorX + (dx * sensitivity)));
-                    cursorY = Math.max(0.5, Math.min(99.5, cursorY + (dy * sensitivity)));
-                    lastVTouchX = e.touches[0].clientX;
-                    lastVTouchY = e.touches[0].clientY;
-                    updateVCursor();
-                }, cursorTouchOpts);
-
-                screenOs.addEventListener('touchend', (e) => {
-                    if (!isPcOn) return;
-                    const t = e.changedTouches[0];
-                    const nodeAt = t ? document.elementFromPoint(t.clientX, t.clientY) : null;
-                    if (shouldIgnoreVirtualCursorTouch(nodeAt) || shouldIgnoreVirtualCursorTouch(e.target)) return;
-                    if (!isVCursorMoving) {
-                        const rect = screenOs.getBoundingClientRect();
-                        const absX = rect.left + (cursorX / 100) * rect.width;
-                        const absY = rect.top + (cursorY / 100) * rect.height;
-                        const el = document.elementFromPoint(absX, absY);
-                        if (el && !shouldIgnoreVirtualCursorTouch(el)) {
-                            playSound(audioClickObj);
-                            el.click();
-                            vCursor.style.transform = 'scale(0.8)';
-                            setTimeout(() => { vCursor.style.transform = ''; }, 100);
-                        }
-                    }
-                }, cursorTouchOpts);
             }
 
             let touchStartX = 0;
@@ -1099,7 +1018,8 @@
                         name: 'Desktop', id: 'Desktop', type: 'hidden', children: [
                             { name: 'Этот компьютер', id: 'sys_computer', type: 'app_computer', icon: 'fa-desktop text-blue-300' },
                             { name: 'Корзина', id: 'sys_trash', type: 'app_trash', icon: 'fa-trash-alt text-gray-400' },
-                            { name: 'readme.txt', id: 'readme', type: 'text', icon: 'fa-file-alt text-gray-200', content: 'Система инициализирована. Ожидание указаний.' }
+                            { name: 'readme.txt', id: 'readme', type: 'text', icon: 'fa-file-alt text-gray-200', content: 'Система инициализирована. Ожидание указаний.' },
+                            { name: 'links.txt', id: 'links', type: 'links_file', icon: 'fa-file-alt text-yellow-300', content: 'МП с Егором #1\nhttps://youtu.be/DJpC81JinF0?si=a-1L1O1ZlbBpSY7r\n\nМП с Егором #2\nhttps://youtu.be/N6oYETLgrx8?si=Dm5pGO9BQfpS4jrk', links: ['https://youtu.be/DJpC81JinF0?si=a-1L1O1ZlbBpSY7r', 'https://youtu.be/N6oYETLgrx8?si=Dm5pGO9BQfpS4jrk'] }
                         ]
                     },
                     {
@@ -1181,34 +1101,22 @@
             function simulateHdd() {
                 if (!isPcOn) return;
                 clearInterval(hddInterval);
-                hddInterval = setInterval(() => {
-                    ledHdd.classList.toggle('opacity-30');
-                    ledHdd.classList.toggle('opacity-100');
-                }, Math.random() * 500 + 100);
+                hddInterval = setInterval(() => { }, Math.random() * 500 + 100);
             }
 
-            // ========== DESKTOP ==========
+            // ========== DESKTOP (icon-only, no labels, neat grid) ==========
             function populateDesktop() {
                 desktopIconsContainer.innerHTML = '';
                 const dFiles = osFiles.children.find(c => c.id === 'Desktop').children;
                 dFiles.forEach(item => {
                     const el = document.createElement('div');
-                    el.className = 'desktop-shortcut cursor-pointer hover:bg-white/10 p-2 rounded transition-colors group flex flex-col items-center';
-                    el.style.width = '6rem';
-                    if (item.id === 'sys_trash') {
-                        el.classList.add('absolute');
-                        el.style.top = '2rem';
-                        el.style.right = '2rem';
-                    } else if (item.id === 'readme') {
-                        el.classList.add('absolute');
-                        el.style.bottom = '2rem';
-                        el.style.left = '2rem';
-                    }
-                    el.innerHTML = '<i class="fas ' + item.icon + ' text-4xl drop-shadow-md mb-1"></i><span class="text-xs text-white text-center shadow-[0_1px_3px_rgba(0,0,0,0.8)] group-hover:bg-blue-600/80 rounded px-1 py-0.5 leading-tight">' + item.name + '</span>';
+                    el.className = 'desktop-shortcut';
+                    el.innerHTML = '<i class="fas ' + item.icon + '"></i>';
                     el.onclick = () => {
                         playSound(audioClickObj);
                         if (item.type === 'app_computer') { currentPath = []; winExplorer.classList.remove('hidden'); renderExplorer(); }
-                        else if (item.type === 'text') { document.getElementById('os-notepad-title').innerHTML = '<i class="fas fa-file-alt text-blue-400"></i> ' + item.name + ' - Блокнот'; notepadContent.textContent = item.content; winNotepad.classList.remove('hidden'); }
+                        else if (item.type === 'text') { openNotepad(item.name, item.content); }
+                        else if (item.type === 'links_file') { openNotepad(item.name, item.content, item.links); }
                     };
                     desktopIconsContainer.appendChild(el);
                 });
@@ -1243,7 +1151,8 @@
                         playSound(audioClickObj);
                         if (item.type === 'folder' || item.type === 'drive' || item.type === 'network' || item.type === 'network_pc') { currentPath.push(item.id); renderExplorer(); }
                         else if (item.type === 'locked_folder') openPasswordPrompt(item);
-                        else if (item.type === 'text') { document.getElementById('os-notepad-title').innerHTML = '<i class="fas fa-file-alt text-blue-400"></i> ' + item.name + ' - Блокнот'; notepadContent.textContent = item.content; winNotepad.classList.remove('hidden'); }
+                        else if (item.type === 'text') { openNotepad(item.name, item.content); }
+                        else if (item.type === 'links_file') { openNotepad(item.name, item.content, item.links); }
                     };
                     grid.appendChild(el);
                 });
@@ -1259,6 +1168,36 @@
             winExplorerClose.onclick = () => { playSound(audioClickObj); winExplorer.classList.add('hidden'); };
             document.getElementById('os-taskbar-explorer').onclick = () => { playSound(audioClickObj); if (winExplorer.classList.contains('hidden')) { winExplorer.classList.remove('hidden'); currentPath = []; renderExplorer(); } else winExplorer.classList.add('hidden'); };
             notepadClose.onclick = () => { playSound(audioClickObj); winNotepad.classList.add('hidden'); };
+
+            // ========== NOTEPAD HELPER ==========
+            function openNotepad(name, content, links) {
+                document.getElementById('os-notepad-title').innerHTML = '<i class="fas fa-file-alt text-blue-400"></i> ' + name + ' - Блокнот';
+                notepadContent.innerHTML = '';
+                const textDiv = document.createElement('div');
+                textDiv.style.whiteSpace = 'pre-wrap';
+                textDiv.style.wordBreak = 'break-all';
+                textDiv.textContent = content;
+                notepadContent.appendChild(textDiv);
+                if (links && links.length) {
+                    const btnWrap = document.createElement('div');
+                    btnWrap.style.cssText = 'display:flex;gap:8px;margin-top:16px;justify-content:center;flex-wrap:wrap;';
+                    links.forEach((url, i) => {
+                        const btn = document.createElement('button');
+                        btn.type = 'button';
+                        btn.textContent = 'Открыть ссылку ' + (i + 1);
+                        btn.style.cssText = 'display:inline-block;padding:10px 18px;background:#3b82f6;color:white;border-radius:20px;font-size:12px;font-weight:600;cursor:pointer;transition:background 0.2s;border:none;';
+                        btn.onmouseenter = () => { btn.style.background = '#2563eb'; };
+                        btn.onmouseleave = () => { btn.style.background = '#3b82f6'; };
+                        btn.addEventListener('click', () => {
+                            playSound(audioClickObj);
+                            window.open(url, '_blank', 'noopener,noreferrer');
+                        });
+                        btnWrap.appendChild(btn);
+                    });
+                    notepadContent.appendChild(btnWrap);
+                }
+                winNotepad.classList.remove('hidden');
+            }
 
             // ========== PASSWORD ==========
             let currentLockedFolder = null;
@@ -1312,40 +1251,25 @@
                     isPcOn = false;
                     clearBootFallback();
                     bootCompleted = false;
-                    if (vCursor) vCursor.classList.remove('active');
                     screenOff.classList.remove('hidden');
                     screenBoot.classList.add('hidden');
                     screenOs.classList.add('hidden');
                     screenOs.style.display = '';
-                    screenOs.classList.remove('touch-cursor-capture');
                     winExplorer.classList.add('hidden');
                     winPassword.classList.add('hidden');
                     winNotepad.classList.add('hidden');
                     winGallery.classList.add('hidden');
                     winPassword.classList.remove('flex');
                     winGallery.classList.remove('flex');
-                    if (pwrIcon) {
-                        pwrIcon.classList.remove('text-blue-400');
-                        pwrIcon.classList.add('text-gray-500');
-                    }
-                    ledPwr.classList.remove('opacity-100', 'shadow-[0_0_8px_#22c55e]');
-                    ledPwr.classList.add('opacity-20');
+                    if (monitorPwrBtn) monitorPwrBtn.classList.remove('monitor-power-btn--on');
                     clearInterval(hddInterval);
                     clearInterval(clockInterval);
-                    ledHdd.classList.remove('opacity-100');
-                    ledHdd.classList.add('opacity-30');
                     audioNoise.pause();
                     audioNoise.currentTime = 0;
                     audioPwr.pause();
-                    if (mobilePowerBtn) mobilePowerBtn.classList.remove('on');
                 } else {
                     isPcOn = true;
-                    if (pwrIcon) {
-                        pwrIcon.classList.remove('text-gray-500');
-                        pwrIcon.classList.add('text-blue-400');
-                    }
-                    ledPwr.classList.remove('opacity-20');
-                    ledPwr.classList.add('opacity-100', 'shadow-[0_0_8px_#22c55e]');
+                    if (monitorPwrBtn) monitorPwrBtn.classList.add('monitor-power-btn--on');
                     screenOff.classList.add('hidden');
                     screenBoot.classList.remove('hidden');
                     bootLogo.classList.remove('opacity-100');
@@ -1367,19 +1291,18 @@
                     audioPwr.play().catch(() => {
                         setTimeout(() => finishBootToOs(), 450);
                     });
-                    if (mobilePowerBtn) mobilePowerBtn.classList.add('on');
                 }
             }
 
-            if (mobilePowerBtn) {
-                mobilePowerBtn.addEventListener('click', (e) => {
+            if (monitorPwrBtn) {
+                monitorPwrBtn.addEventListener('click', (e) => {
                     e.stopPropagation();
                     doPowerToggle();
                 });
             }
-            const mobileHomeBtn = document.getElementById('mobile-home-btn');
-            if (mobileHomeBtn) {
-                mobileHomeBtn.addEventListener('click', () => {
+            if (monitorCloseBtn) {
+                monitorCloseBtn.addEventListener('click', (e) => {
+                    e.stopPropagation();
                     window.location.href = 'index.html';
                 });
             }
